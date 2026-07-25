@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 32px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .back-btn {
+            color: #ff9f0a;
+            font-size: 17px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+        }
+        .date {
+            color: #8e8e93;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        
+        /* Main Folder / Notes List */
+        .notes-folder {
+            background: #1c1c1e;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .folder-item {
+            padding: 16px;
+            border-bottom: 1px solid #38383a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .folder-item:last-child {
+            border-bottom: none;
+        }
+        .folder-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .folder-count {
+            color: #8e8e93;
+            font-size: 15px;
+        }
+
+        /* Detail Items List */
+        .detail-list {
+            display: none;
+            background: #1c1c1e;
+            border-radius: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .list-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #38383a;
+            font-size: 16px;
+            display: flex;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .item-num {
+            color: #ff9f0a;
+            width: 45px;
+            font-weight: bold;
+        }
+
+        /* Magician Control Panel */
+        .control-panel {
+            margin-top: 25px;
+            background: #111;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        .control-panel h3 {
+            margin: 0 0 10px 0;
+            color: #ff9f0a;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        .control-panel input {
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            width: 90%;
+            text-align: center;
+            font-size: 14px;
+        }
+        .control-panel button {
+            background: #ff9f0a;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="back-btn" id="backBtn" onclick="showFolderView()">‹ Notes</span>
+            <h1 id="mainTitle">Notes</h1>
+        </div>
+        <div class="date" id="dateDisplay">July 26, 2026</div>
+
+        <!-- Home View: Folder List -->
+        <div class="notes-folder" id="folderView">
+            <div class="folder-item" onclick="openNote('celebrity')">
+                <span class="folder-title">Famous Celebrities</span>
+                <span class="folder-count">100 ›</span>
+            </div>
+            <div class="folder-item" onclick="openNote('superhero')">
+                <span class="folder-title">Superheroes List</span>
+                <span class="folder-count">15 ›</span>
+            </div>
+        </div>
+
+        <!-- Detail View: Items List -->
+        <div class="detail-list" id="detailView"></div>
+
+        <!-- Magician Control Panel -->
+        <div class="control-panel" id="secretPanel">
+            <h3>Magician Control Panel</h3>
+            
+            <div class="input-group">
+                <label>Celebrity Force Item (Target #23):</label>
+                <input type="text" id="celebForceInput" value="Leonardo DiCaprio">
+            </div>
+
+            <div class="input-group">
+                <label>Superhero Force Item (Target #7):</label>
+                <input type="text" id="heroForceInput" value="Spider-Man">
+            </div>
+
+            <button onclick="saveForceSettings()">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Celebrity Sample Database (1 - 100)
+        let celebrities = [
+            "Tom Cruise", "Will Smith", "Brad Pitt", "Johnny Depp", "Denzel Washington",
+            "Keanu Reeves", "Leonardo DiCaprio", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie",
+            "Morgan Freeman", "Matt Damon", "Christian Bale", "Hugh Jackman", "Chris Hemsworth",
+            "Chris Evans", "Mark Ruffalo", "Tom Hardy", "Ryan Reynolds", "Gal Gadot",
+            "Emma Watson", "Jennifer Lawrence", "Taylor Swift", "Beyoncé", "Rihanna",
+            "Justin Bieber", "Drake", "Eminem", "Kanye West", "Bruno Mars",
+            "Ed Sheeran", "Ariana Grande", "Selena Gomez", "Billie Eilish", "Dwayne Johnson",
+            "Vin Diesel", "Jason Statham", "Jackie Chan", "Jet Li", "Stephen Chow",
+            "Shah Rukh Khan", "Salman Khan", "Aamir Khan", "BTS (Jungkook)", "IU",
+            "Ji Chang-wook", "Lee Do-hyun", "Song Joong-ki", "Lee Min-ho", "G-Dragon"
+        ];
+        // Fill remaining up to 100 with generic placeholders
+        for (let i = 51; i <= 100; i++) {
+            celebrities.push("Celebrity Star #" + i);
+        }
+
+        // 2. Superhero Database (1 - 15)
+        let superheroes = [
+            "Iron Man", "Captain America", "Thor", "Hulk", "Black Widow",
+            "Hawkeye", "Spider-Man", "Doctor Strange", "Black Panther", "Ant-Man",
+            "Superman", "Batman", "Wonder Woman", "The Flash", "Aquaman"
+        ];
+
+        // Force Configuration
+        let celebForceIndex = 23; // နံပါတ် ၂၃ ကို Force လုပ်မည်
+        let celebForceName = "Leonardo DiCaprio";
+
+        let heroForceIndex = 7;   // နံပါတ် ၇ ကို Force လုပ်မည်
+        let heroForceName = "Spider-Man";
+
+        function openNote(type) {
+            document.getElementById('folderView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'flex';
+
+            const container = document.getElementById('detailView');
+            container.innerHTML = '';
+
+            if (type === 'celebrity') {
+                document.getElementById('mainTitle').innerText = "Celebrities";
+                for (let i = 1; i <= 100; i++) {
+                    let name = celebrities[i - 1] || ("Celebrity #" + i);
+                    if (i === celebForceIndex) {
+                        name = celebForceName; // Force Target
+                    }
+                    container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
+                }
+            } else if (type === 'superhero') {
+                document.getElementById('mainTitle').innerText = "Superheroes";
+                for (let i = 1; i <= 15; i++) {
+                    let name = superheroes[i - 1] || ("Superhero #" + i);
+                    if (i === heroForceIndex) {
+                        name = heroForceName; // Force Target
+                    }
+                    container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
+                }
+            }
+        }
+
+        function showFolderView() {
+            document.getElementById('folderView').style.display = 'block';
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('mainTitle').innerText = "Notes";
+        }
+
+        function saveForceSettings() {
+            celebForceName = document.getElementById('celebForceInput').value.trim();
+            heroForceName = document.getElementById('heroForceInput').value.trim();
+            alert("Control Panel Updated!");
+        }
+
+        // Title ကို ၃ ခါ နှိပ်လျှင် Control Panel ပုန်း/ပေါ် ဖြစ်မည်
+        let titleTap = 0;
+        document.getElementById('mainTitle').addEventListener('click', () => {
+            titleTap++;
+            if (titleTap === 3) {
+                let p = document.getElementById('secretPanel');
+                p.style.display = p.style.display === 'none' ? 'block' : 'none';
+                titleTap = 0;
+            }
+        });
+    </script>
+</body>
+</html>
