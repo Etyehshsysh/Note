@@ -47,7 +47,7 @@
             margin-bottom: 15px;
         }
         
-        /* Main Folder / Notes List */
+        /* Main Folder List */
         .notes-folder {
             background: #1c1c1e;
             border-radius: 12px;
@@ -112,6 +112,7 @@
         }
         .input-group {
             margin-bottom: 12px;
+            text-align: left;
         }
         .input-group label {
             display: block;
@@ -125,7 +126,7 @@
             color: #fff;
             padding: 8px;
             border-radius: 6px;
-            width: 90%;
+            width: 100%;
             text-align: center;
             font-size: 14px;
         }
@@ -133,11 +134,12 @@
             background: #ff9f0a;
             color: #000;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 18px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             margin-top: 5px;
+            width: 100%;
         }
     </style>
 </head>
@@ -150,7 +152,7 @@
         </div>
         <div class="date" id="dateDisplay">July 26, 2026</div>
 
-        <!-- Home View: Folder List -->
+        <!-- Home View -->
         <div class="notes-folder" id="folderView">
             <div class="folder-item" onclick="openNote('celebrity')">
                 <span class="folder-title">Famous Celebrities</span>
@@ -162,32 +164,40 @@
             </div>
         </div>
 
-        <!-- Detail View: Items List -->
+        <!-- Detail View -->
         <div class="detail-list" id="detailView"></div>
 
-        <!-- Magician Control Panel -->
+        <!-- Magician Secret Setup Panel -->
         <div class="control-panel" id="secretPanel">
             <h3>Magician Control Panel</h3>
             
             <div class="input-group">
-                <label>Celebrity Force Item (Target #23):</label>
-                <input type="text" id="celebForceInput" value="Leonardo DiCaprio">
+                <label>Celebrity Spectator's Number (1-100):</label>
+                <input type="number" id="celebNumInput" placeholder="Enter spectator number (e.g. 58)">
             </div>
 
             <div class="input-group">
-                <label>Superhero Force Item (Target #7):</label>
-                <input type="text" id="heroForceInput" value="Spider-Man">
+                <label>Superhero Spectator's Number (1-15):</label>
+                <input type="number" id="heroNumInput" placeholder="Enter spectator number (e.g. 12)">
             </div>
 
-            <button onclick="saveForceSettings()">Save Settings</button>
+            <button onclick="updateForceNumbers()">Apply Spectator Choice</button>
         </div>
     </div>
 
     <script>
-        // 1. Celebrity Sample Database (1 - 100)
-        let celebrities = [
+        // Default Fixed Force Names (ပုံသေ အဖြေများ)
+        let fixedCelebrityForce = "Leonardo DiCaprio";
+        let fixedSuperheroForce = "Spider-Man";
+
+        // Active Force Numbers (ပရိသတ်ပြောမည့် နံပါတ်များ)
+        let activeCelebNumber = 23; // Default
+        let activeHeroNumber = 7;   // Default
+
+        // Sample Databases
+        let baseCelebrities = [
             "Tom Cruise", "Will Smith", "Brad Pitt", "Johnny Depp", "Denzel Washington",
-            "Keanu Reeves", "Leonardo DiCaprio", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie",
+            "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie",
             "Morgan Freeman", "Matt Damon", "Christian Bale", "Hugh Jackman", "Chris Hemsworth",
             "Chris Evans", "Mark Ruffalo", "Tom Hardy", "Ryan Reynolds", "Gal Gadot",
             "Emma Watson", "Jennifer Lawrence", "Taylor Swift", "Beyoncé", "Rihanna",
@@ -197,24 +207,12 @@
             "Shah Rukh Khan", "Salman Khan", "Aamir Khan", "BTS (Jungkook)", "IU",
             "Ji Chang-wook", "Lee Do-hyun", "Song Joong-ki", "Lee Min-ho", "G-Dragon"
         ];
-        // Fill remaining up to 100 with generic placeholders
-        for (let i = 51; i <= 100; i++) {
-            celebrities.push("Celebrity Star #" + i);
-        }
 
-        // 2. Superhero Database (1 - 15)
-        let superheroes = [
+        let baseSuperheroes = [
             "Iron Man", "Captain America", "Thor", "Hulk", "Black Widow",
-            "Hawkeye", "Spider-Man", "Doctor Strange", "Black Panther", "Ant-Man",
-            "Superman", "Batman", "Wonder Woman", "The Flash", "Aquaman"
+            "Hawkeye", "Doctor Strange", "Black Panther", "Ant-Man",
+            "Superman", "Batman", "Wonder Woman", "The Flash", "Aquaman", "Wolverine"
         ];
-
-        // Force Configuration
-        let celebForceIndex = 23; // နံပါတ် ၂၃ ကို Force လုပ်မည်
-        let celebForceName = "Leonardo DiCaprio";
-
-        let heroForceIndex = 7;   // နံပါတ် ၇ ကို Force လုပ်မည်
-        let heroForceName = "Spider-Man";
 
         function openNote(type) {
             document.getElementById('folderView').style.display = 'none';
@@ -227,19 +225,25 @@
             if (type === 'celebrity') {
                 document.getElementById('mainTitle').innerText = "Celebrities";
                 for (let i = 1; i <= 100; i++) {
-                    let name = celebrities[i - 1] || ("Celebrity #" + i);
-                    if (i === celebForceIndex) {
-                        name = celebForceName; // Force Target
+                    let name = baseCelebrities[(i - 1) % baseCelebrities.length];
+                    
+                    // ပရိသတ် ရွေးလိုက်သော နံပါတ်နေရာ၌ Fixed Force Name ပေါ်စေခြင်း
+                    if (i === parseInt(activeCelebNumber)) {
+                        name = fixedCelebrityForce;
                     }
+                    
                     container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
                 }
             } else if (type === 'superhero') {
                 document.getElementById('mainTitle').innerText = "Superheroes";
                 for (let i = 1; i <= 15; i++) {
-                    let name = superheroes[i - 1] || ("Superhero #" + i);
-                    if (i === heroForceIndex) {
-                        name = heroForceName; // Force Target
+                    let name = baseSuperheroes[(i - 1) % baseSuperheroes.length];
+                    
+                    // ပရိသတ် ရွေးလိုက်သော နံပါတ်နေရာ၌ Fixed Force Name ပေါ်စေခြင်း
+                    if (i === parseInt(activeHeroNumber)) {
+                        name = fixedSuperheroForce;
                     }
+                    
                     container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
                 }
             }
@@ -252,13 +256,19 @@
             document.getElementById('mainTitle').innerText = "Notes";
         }
 
-        function saveForceSettings() {
-            celebForceName = document.getElementById('celebForceInput').value.trim();
-            heroForceName = document.getElementById('heroForceInput').value.trim();
-            alert("Control Panel Updated!");
+        function updateForceNumbers() {
+            let cNum = document.getElementById('celebNumInput').value;
+            let hNum = document.getElementById('heroNumInput').value;
+
+            if (cNum) activeCelebNumber = parseInt(cNum);
+            if (hNum) activeHeroNumber = parseInt(hNum);
+
+            // Secret Panel ကို ပုန်းအုပ်လိုက်ခြင်း
+            document.getElementById('secretPanel').style.display = 'none';
+            alert("Updated! Spectator's number is now active.");
         }
 
-        // Title ကို ၃ ခါ နှိပ်လျှင် Control Panel ပုန်း/ပေါ် ဖြစ်မည်
+        // Title ကို ၃ ခါ နှိပ်လျှင် Control Panel ပုန်း/ပေါ် ပြုလုပ်ခြင်း
         let titleTap = 0;
         document.getElementById('mainTitle').addEventListener('click', () => {
             titleTap++;
