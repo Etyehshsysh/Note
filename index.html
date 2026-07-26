@@ -78,12 +78,13 @@
 
         /* Hidden Secret Control Panel */
         .control-panel {
-            display: none; /* Initially Hidden */
+            display: none;
             background: #1c1c1e;
             border-radius: 12px;
             padding: 16px;
             border: 1px solid #ff9f0a;
             margin-top: 15px;
+            position: relative;
         }
         .panel-title {
             color: #ff9f0a;
@@ -114,19 +115,34 @@
         .input-group input::placeholder {
             color: #55555e;
         }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
         .apply-btn {
-            width: 100%;
+            flex: 2;
             background: #ff9f0a;
             color: #000000;
             border: none;
             border-radius: 8px;
             padding: 12px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 5px;
         }
-        .apply-btn:active {
+        .close-btn {
+            flex: 1;
+            background: #3a3a3c;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .apply-btn:active, .close-btn:active {
             opacity: 0.8;
         }
 
@@ -175,18 +191,21 @@
             <div class="control-panel" id="secretPanel">
                 <div class="panel-title">Magician Control Panel</div>
                 <div class="input-group">
-                    <label>Celebrity Spectator's Number (1-100):</label>
-                    <input type="number" id="celebNum" placeholder="Enter spectator number (e.g. 58)">
+                    <label>Celebrity Target Number (1-100):</label>
+                    <input type="number" id="celebNum" placeholder="Force Tom Cruise at e.g. 58">
                 </div>
                 <div class="input-group">
-                    <label>Superhero Spectator's Number (1-15):</label>
-                    <input type="number" id="heroNum" placeholder="Enter spectator number (e.g. 12)">
+                    <label>Superhero Target Number (1-15):</label>
+                    <input type="number" id="heroNum" placeholder="Force Spider-Man at e.g. 12">
                 </div>
                 <div class="input-group">
-                    <label>Animal Spectator's Number (1-50):</label>
-                    <input type="number" id="animalNum" placeholder="Enter spectator number (e.g. 46)">
+                    <label>Animal Target Number (1-50):</label>
+                    <input type="number" id="animalNum" placeholder="Force Bear at e.g. 46">
                 </div>
-                <button class="apply-btn" onclick="applyMagicChoice()">Apply & Hide Panel</button>
+                <div class="btn-group">
+                    <button class="apply-btn" onclick="applyMagicChoice()">Apply Choice</button>
+                    <button class="close-btn" onclick="hidePanel()">Close</button>
+                </div>
             </div>
         </div>
 
@@ -197,33 +216,39 @@
     </div>
 
     <script>
-        const celebritiesList = [
-            "Leonardo DiCaprio", "Tom Cruise", "Brad Pitt", "Johnny Depp", "Will Smith", 
-            "Dwayne Johnson", "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie", 
-            "Emma Watson", "Tom Hanks", "Morgan Freeman", "Christian Bale", "Ryan Reynolds", 
-            "Chris Hemsworth", "Chris Evans", "Mark Ruffalo", "Benedict Cumberbatch", "Tom Holland", 
-            "Zendaya", "Margot Robbie", "Cillian Murphy", "Joaquin Phoenix", "Matthew McConaughey", 
-            "Anne Hathaway", "Natalie Portman", "Jennifer Lawrence", "Meryl Streep", "Denzel Washington", 
-            "Samuel L. Jackson", "Hugh Jackman", "Daniel Craig", "Jason Statham", "Vin Diesel", 
-            "Paul Rudd", "Steve Carell", "Jim Carrey", "Adam Sandler", "Seth Rogen", 
-            "Jack Black", "Chris Pratt", "Zoe Saldana", "Gal Gadot", "Henry Cavill", 
-            "Ben Affleck", "Matt Damon", "George Clooney", "Nicole Kidman", "Cate Blanchett", 
-            "Emily Blunt", "Florence Pugh", "Timothée Chalamet", "Austin Butler", "Jacob Elordi", 
-            "Jenna Ortega", "Sydney Sweeney", "Ana de Armas", "Anya Taylor-Joy", "Elizabeth Olsen", 
-            "Michael B. Jordan", "Chadwick Boseman", "Pedro Pascal", "Oscar Isaac", "Andrew Garfield", 
-            "Tobey Maguire", "Rami Malek", "Mahershala Ali", "Idris Elba", "Javier Bardem", 
-            "Mads Mikkelsen", "Christoph Waltz", "Willem Dafoe", "Gary Oldman", "Anthony Hopkins", 
-            "Ian McKellen", "Patrick Stewart", "Liam Neeson", "Harrison Ford", "Sylvester Stallone", 
-            "Arnold Schwarzenegger", "Jackie Chan", "Jet Li", "Donnie Yen", "Stephen Chow", 
-            "Chow Yun-fat", "Tony Leung", "Michelle Yeoh", "Ken Watanabe", "Hiroyuki Sanada", 
-            "Lee Jung-jae", "Song Kang-ho", "Gong Yoo", "Hyun Bin", "Park Seo-jun", 
-            "Ji Chang-wook", "Lee Do-hyun", "Kim Soo-hyun", "Song Joong-ki", "Ma Dong-seok"
+        // Force Target Items
+        const FORCE_CELEB = "Tom Cruise";
+        const FORCE_HERO = "Spider-Man";
+        const FORCE_ANIMAL = "Bear";
+
+        // Unique Base Lists (Strictly zero overlapping names)
+        const baseCelebritiesList = [
+            "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Dwayne Johnson", 
+            "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie", "Emma Watson", 
+            "Tom Hanks", "Morgan Freeman", "Christian Bale", "Ryan Reynolds", "Chris Hemsworth", 
+            "Chris Evans", "Mark Ruffalo", "Benedict Cumberbatch", "Tom Holland", "Zendaya", 
+            "Margot Robbie", "Cillian Murphy", "Joaquin Phoenix", "Matthew McConaughey", "Anne Hathaway", 
+            "Natalie Portman", "Jennifer Lawrence", "Meryl Streep", "Denzel Washington", "Samuel L. Jackson", 
+            "Hugh Jackman", "Daniel Craig", "Jason Statham", "Vin Diesel", "Paul Rudd", 
+            "Steve Carell", "Jim Carrey", "Adam Sandler", "Seth Rogen", "Jack Black", 
+            "Chris Pratt", "Zoe Saldana", "Gal Gadot", "Henry Cavill", "Ben Affleck", 
+            "Matt Damon", "George Clooney", "Nicole Kidman", "Cate Blanchett", "Emily Blunt", 
+            "Florence Pugh", "Timothée Chalamet", "Austin Butler", "Jacob Elordi", "Jenna Ortega", 
+            "Sydney Sweeney", "Ana de Armas", "Anya Taylor-Joy", "Elizabeth Olsen", "Michael B. Jordan", 
+            "Chadwick Boseman", "Pedro Pascal", "Oscar Isaac", "Andrew Garfield", "Tobey Maguire", 
+            "Rami Malek", "Mahershala Ali", "Idris Elba", "Javier Bardem", "Mads Mikkelsen", 
+            "Christoph Waltz", "Willem Dafoe", "Gary Oldman", "Anthony Hopkins", "Ian McKellen", 
+            "Patrick Stewart", "Liam Neeson", "Harrison Ford", "Sylvester Stallone", "Arnold Schwarzenegger", 
+            "Jackie Chan", "Jet Li", "Donnie Yen", "Stephen Chow", "Chow Yun-fat", 
+            "Tony Leung", "Michelle Yeoh", "Ken Watanabe", "Hiroyuki Sanada", "Lee Jung-jae", 
+            "Song Kang-ho", "Gong Yoo", "Hyun Bin", "Park Seo-jun", "Ji Chang-wook", 
+            "Lee Do-hyun", "Kim Soo-hyun", "Song Joong-ki", "Ma Dong-seok"
         ];
 
-        const superheroesList = [
-            "Spider-Man", "Iron Man", "Batman", "Superman", "Captain America", 
-            "Thor", "Wonder Woman", "The Hulk", "Black Panther", "Wolverine", 
-            "Doctor Strange", "Flash", "Aquaman", "Deadpool", "Green Lantern"
+        const baseSuperheroesList = [
+            "Iron Man", "Batman", "Superman", "Captain America", "Thor", 
+            "Wonder Woman", "The Hulk", "Black Panther", "Doctor Strange", 
+            "Flash", "Aquaman", "Deadpool", "Green Lantern", "Cyborg"
         ];
 
         const baseAnimalsList = [
@@ -231,19 +256,23 @@
             "Wolf", "Fox", "Zebra", "Giraffe", "Kangaroo", 
             "Panda", "Gorilla", "Monkey", "Rhino", "Hippo", 
             "Deer", "Camel", "Koala", "Otter", "Beaver", 
-            "Eagle", "Falcon", "Owl", "Penguin", "Dolphin", 
-            "Whale", "Shark", "Octopus", "Seal", "Crocodile", 
-            "Alligator", "Snake", "Lizard", "Turtle", "Frog", 
-            "Bison", "Moose", "Hyena", "Jaguar", "Panther", 
-            "Lynx", "Meerkat", "Sloth", "Lemur", "Hedgehog", 
-            "Porcupine", "Walrus", "Gazelle", "Flamingo"
+            "Eagle", "Owl", "Penguin", "Dolphin", "Whale", 
+            "Shark", "Octopus", "Seal", "Crocodile", "Alligator", 
+            "Snake", "Lizard", "Turtle", "Frog", "Bison", 
+            "Moose", "Hyena", "Jaguar", "Panther", "Lynx", 
+            "Meerkat", "Sloth", "Lemur", "Hedgehog", "Porcupine", 
+            "Walrus", "Gazelle", "Flamingo", "Chameleon"
         ];
 
-        let forcedBearPosition = 4;
+        // Active Target Positions
+        let forcedCelebPosition = 2;
+        let forcedHeroPosition = 1;
+        let forcedAnimalPosition = 4;
+
         let tapCount = 0;
         let tapTimer = null;
 
-        // Secret Triple Tap to Toggle Control Panel
+        // Triple Tap Header to Toggle Secret Panel
         function handleTitleTap() {
             tapCount++;
             if (tapCount === 1) {
@@ -254,55 +283,71 @@
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 let panel = document.getElementById('secretPanel');
-                if (panel.style.display === 'block') {
-                    panel.style.display = 'none';
-                } else {
-                    panel.style.display = 'block';
-                }
+                panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
             }
         }
 
+        function hidePanel() {
+            document.getElementById('secretPanel').style.display = 'none';
+        }
+
+        // Render Lists
         function renderLists() {
-            // Render Celebrities
+            // Celebrities
             let celebHTML = "";
-            celebritiesList.forEach((name, index) => {
-                celebHTML += `${index + 1}. ${name}\n`;
-            });
+            let celebBaseIdx = 0;
+            for (let i = 1; i <= 100; i++) {
+                if (i === forcedCelebPosition) {
+                    celebHTML += `${i}. ${FORCE_CELEB}\n`;
+                } else {
+                    celebHTML += `${i}. ${baseCelebritiesList[celebBaseIdx]}\n`;
+                    celebBaseIdx++;
+                }
+            }
             document.getElementById('celebView').innerText = celebHTML;
 
-            // Render Superheroes
+            // Superheroes
             let heroHTML = "";
-            superheroesList.forEach((name, index) => {
-                heroHTML += `${index + 1}. ${name}\n`;
-            });
+            let heroBaseIdx = 0;
+            for (let i = 1; i <= 15; i++) {
+                if (i === forcedHeroPosition) {
+                    heroHTML += `${i}. ${FORCE_HERO}\n`;
+                } else {
+                    heroHTML += `${i}. ${baseSuperheroesList[heroBaseIdx]}\n`;
+                    heroBaseIdx++;
+                }
+            }
             document.getElementById('heroView').innerText = heroHTML;
 
-            // Render Animals
+            // Animals
             let animalHTML = "";
-            let baseIndex = 0;
+            let animalBaseIdx = 0;
             for (let i = 1; i <= 50; i++) {
-                if (i === forcedBearPosition) {
-                    animalHTML += `${i}. Bear\n`;
+                if (i === forcedAnimalPosition) {
+                    animalHTML += `${i}. ${FORCE_ANIMAL}\n`;
                 } else {
-                    animalHTML += `${i}. ${baseAnimalsList[baseIndex]}\n`;
-                    baseIndex++;
+                    animalHTML += `${i}. ${baseAnimalsList[animalBaseIdx]}\n`;
+                    animalBaseIdx++;
                 }
             }
             document.getElementById('animalView').innerText = animalHTML;
         }
 
+        // Apply Custom Spectator Choice Numbers
         function applyMagicChoice() {
+            let celebVal = parseInt(document.getElementById('celebNum').value) || 0;
+            let heroVal = parseInt(document.getElementById('heroNum').value) || 0;
             let animalVal = parseInt(document.getElementById('animalNum').value) || 0;
 
-            if (animalVal >= 1 && animalVal <= 50) {
-                forcedBearPosition = animalVal;
-            }
+            if (celebVal >= 1 && celebVal <= 100) forcedCelebPosition = celebVal;
+            if (heroVal >= 1 && heroVal <= 15) forcedHeroPosition = heroVal;
+            if (animalVal >= 1 && animalVal <= 50) forcedAnimalPosition = animalVal;
 
             renderLists();
-            // Automatically hide panel after applying
-            document.getElementById('secretPanel').style.display = 'none';
+            hidePanel();
         }
 
+        // Independent Navigation Controls
         function openNote(type) {
             document.getElementById('folderView').style.display = 'none';
             document.getElementById('backBtn').style.display = 'inline';
@@ -332,7 +377,8 @@
             document.getElementById('mainTitle').innerText = "Notes";
         }
 
+        // Initial Setup
         renderLists();
     </script>
 </body>
-    </html>                                     
+                </html>
