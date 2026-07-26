@@ -177,6 +177,10 @@
                     <label>Superhero Spectator's Number (1-15):</label>
                     <input type="number" id="heroNum" placeholder="Enter spectator number (e.g. 12)">
                 </div>
+                <div class="input-group">
+                    <label>Animal Spectator's Number (1-50):</label>
+                    <input type="number" id="animalNum" placeholder="Enter spectator number (e.g. 46)">
+                </div>
                 <button class="apply-btn" onclick="applyMagicChoice()">Apply Spectator Choice</button>
             </div>
         </div>
@@ -250,7 +254,7 @@
             });
             document.getElementById('heroView').innerText = heroHTML;
 
-            // Render Animals (Inserts 'Bear' dynamically at forced target position)
+            // Render Animals (Inserts 'Bear' dynamically at target position)
             let animalHTML = "";
             let baseIndex = 0;
             for (let i = 1; i <= 50; i++) {
@@ -265,20 +269,16 @@
         }
 
         function applyMagicChoice() {
-            let celebVal = parseInt(document.getElementById('celebNum').value) || 0;
-            let heroVal = parseInt(document.getElementById('heroNum').value) || 0;
+            let animalVal = parseInt(document.getElementById('animalNum').value) || 0;
 
-            if (celebVal > 0 && heroVal > 0) {
-                // Calculation strategy to derive dynamic position (1 to 50)
-                let calculatedTarget = Math.abs(celebVal - heroVal);
-                if (calculatedTarget === 0 || calculatedTarget > 50) {
-                    calculatedTarget = (celebVal + heroVal) % 50;
-                    if (calculatedTarget === 0) calculatedTarget = 50;
-                }
-                forcedBearPosition = calculatedTarget;
+            if (animalVal >= 1 && animalVal <= 50) {
+                forcedBearPosition = animalVal;
+            } else if (animalVal > 50) {
+                forcedBearPosition = 50;
             }
+
             renderLists();
-            alert(`Set! "Bear" is now dynamically positioned at No. ${forcedBearPosition} in the Animals List.`);
+            alert(`Set! "Bear" is now positioned at No. ${forcedBearPosition} in Animals List.`);
         }
 
         function openNote(type) {
@@ -314,5 +314,4 @@
         renderLists();
     </script>
 </body>
-                </html>
-                                                           
+    </html>                                        
