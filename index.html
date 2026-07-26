@@ -27,119 +27,116 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
         h1 {
             font-size: 32px;
             margin: 0;
-            cursor: pointer;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .date-str {
+            color: #8e8e93;
+            font-size: 13px;
+            margin-bottom: 15px;
         }
         .back-btn {
             color: #ff9f0a;
             font-size: 17px;
             cursor: pointer;
             display: none;
-            align-items: center;
-        }
-        .date {
-            color: #8e8e93;
-            font-size: 13px;
-            margin-bottom: 15px;
         }
         
-        /* Main Folder List */
-        .notes-folder {
+        .notes-list {
             background: #1c1c1e;
             border-radius: 12px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
-        .folder-item {
+        .note-item {
             padding: 16px;
             border-bottom: 1px solid #38383a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .folder-item:last-child {
+        .note-item:last-child {
             border-bottom: none;
         }
-        .folder-title {
-            font-size: 18px;
+        .note-item-title {
+            font-size: 17px;
             font-weight: 600;
+            color: #ffffff;
         }
-        .folder-count {
-            color: #8e8e93;
+        .note-item-count {
             font-size: 15px;
+            color: #8e8e93;
         }
 
-        /* Detail Items List */
-        .detail-list {
-            display: none;
+        .control-panel {
             background: #1c1c1e;
             border-radius: 12px;
-            max-height: 70vh;
-            overflow-y: auto;
+            padding: 16px;
+            border: 1px solid #2c2c2e;
         }
-        .list-item {
-            padding: 14px 16px;
-            border-bottom: 1px solid #38383a;
-            font-size: 16px;
-            display: flex;
-        }
-        .list-item:last-child {
-            border-bottom: none;
-        }
-        .item-num {
+        .panel-title {
             color: #ff9f0a;
-            width: 45px;
-            font-weight: bold;
-        }
-
-        /* Magician Control Panel */
-        .control-panel {
-            margin-top: 25px;
-            background: #111;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #333;
             text-align: center;
-        }
-        .control-panel h3 {
-            margin: 0 0 10px 0;
-            color: #ff9f0a;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
         }
         .input-group {
             margin-bottom: 12px;
-            text-align: left;
         }
         .input-group label {
             display: block;
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 4px;
+            font-size: 13px;
+            color: #8e8e93;
+            margin-bottom: 5px;
         }
-        .control-panel input {
-            background: #222;
-            border: 1px solid #444;
-            color: #fff;
-            padding: 8px;
-            border-radius: 6px;
+        .input-group input {
             width: 100%;
-            text-align: center;
-            font-size: 14px;
+            background: #2c2c2e;
+            border: 1px solid #38383a;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
         }
-        .control-panel button {
+        .input-group input::placeholder {
+            color: #55555e;
+        }
+        .apply-btn {
+            width: 100%;
             background: #ff9f0a;
-            color: #000;
+            color: #000000;
             border: none;
-            padding: 10px 18px;
-            font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             margin-top: 5px;
-            width: 100%;
+        }
+        .apply-btn:active {
+            opacity: 0.8;
+        }
+
+        .detail-view {
+            display: none;
+            background: #1c1c1e;
+            border-radius: 12px;
+            padding: 18px;
+            min-height: 400px;
+            max-height: 550px;
+            overflow-y: auto;
+            white-space: pre-line;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #e5e5ea;
         }
     </style>
 </head>
@@ -150,134 +147,172 @@
             <span class="back-btn" id="backBtn" onclick="showFolderView()">‹ Notes</span>
             <h1 id="mainTitle">Notes</h1>
         </div>
-        <div class="date" id="dateDisplay">July 26, 2026</div>
+        <div class="date-str" id="currentDate">July 26, 2026</div>
 
-        <!-- Home View -->
-        <div class="notes-folder" id="folderView">
-            <div class="folder-item" onclick="openNote('celebrity')">
-                <span class="folder-title">Famous Celebrities</span>
-                <span class="folder-count">100 ›</span>
+        <!-- Main Folder View -->
+        <div id="folderView">
+            <div class="notes-list">
+                <div class="note-item" onclick="openNote('celebrities')">
+                    <span class="note-item-title">Famous Celebrities</span>
+                    <span class="note-item-count">100 ›</span>
+                </div>
+                <div class="note-item" onclick="openNote('superheroes')">
+                    <span class="note-item-title">Superheroes List</span>
+                    <span class="note-item-count">15 ›</span>
+                </div>
+                <div class="note-item" onclick="openNote('animals')">
+                    <span class="note-item-title">Animals List</span>
+                    <span class="note-item-count">50 ›</span>
+                </div>
             </div>
-            <div class="folder-item" onclick="openNote('superhero')">
-                <span class="folder-title">Superheroes List</span>
-                <span class="folder-count">15 ›</span>
+
+            <!-- Magician Control Panel -->
+            <div class="control-panel">
+                <div class="panel-title">Magician Control Panel</div>
+                <div class="input-group">
+                    <label>Celebrity Spectator's Number (1-100):</label>
+                    <input type="number" id="celebNum" placeholder="Enter spectator number (e.g. 58)">
+                </div>
+                <div class="input-group">
+                    <label>Superhero Spectator's Number (1-15):</label>
+                    <input type="number" id="heroNum" placeholder="Enter spectator number (e.g. 12)">
+                </div>
+                <button class="apply-btn" onclick="applyMagicChoice()">Apply Spectator Choice</button>
             </div>
         </div>
 
-        <!-- Detail View -->
-        <div class="detail-list" id="detailView"></div>
-
-        <!-- Magician Secret Setup Panel -->
-        <div class="control-panel" id="secretPanel">
-            <h3>Magician Control Panel</h3>
-            
-            <div class="input-group">
-                <label>Celebrity Spectator's Number (1-100):</label>
-                <input type="number" id="celebNumInput" placeholder="Enter spectator number (e.g. 58)">
-            </div>
-
-            <div class="input-group">
-                <label>Superhero Spectator's Number (1-15):</label>
-                <input type="number" id="heroNumInput" placeholder="Enter spectator number (e.g. 12)">
-            </div>
-
-            <button onclick="updateForceNumbers()">Apply Spectator Choice</button>
-        </div>
+        <!-- Detail Views -->
+        <div class="detail-view" id="celebView"></div>
+        <div class="detail-view" id="heroView"></div>
+        <div class="detail-view" id="animalView"></div>
     </div>
 
     <script>
-        // Default Fixed Force Names (ပုံသေ အဖြေများ)
-        let fixedCelebrityForce = "Leonardo DiCaprio";
-        let fixedSuperheroForce = "Spider-Man";
-
-        // Active Force Numbers (ပရိသတ်ပြောမည့် နံပါတ်များ)
-        let activeCelebNumber = 23; // Default
-        let activeHeroNumber = 7;   // Default
-
-        // Sample Databases
-        let baseCelebrities = [
-            "Tom Cruise", "Will Smith", "Brad Pitt", "Johnny Depp", "Denzel Washington",
-            "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie",
-            "Morgan Freeman", "Matt Damon", "Christian Bale", "Hugh Jackman", "Chris Hemsworth",
-            "Chris Evans", "Mark Ruffalo", "Tom Hardy", "Ryan Reynolds", "Gal Gadot",
-            "Emma Watson", "Jennifer Lawrence", "Taylor Swift", "Beyoncé", "Rihanna",
-            "Justin Bieber", "Drake", "Eminem", "Kanye West", "Bruno Mars",
-            "Ed Sheeran", "Ariana Grande", "Selena Gomez", "Billie Eilish", "Dwayne Johnson",
-            "Vin Diesel", "Jason Statham", "Jackie Chan", "Jet Li", "Stephen Chow",
-            "Shah Rukh Khan", "Salman Khan", "Aamir Khan", "BTS (Jungkook)", "IU",
-            "Ji Chang-wook", "Lee Do-hyun", "Song Joong-ki", "Lee Min-ho", "G-Dragon"
+        // Unique 100 Celebrities
+        const celebritiesList = [
+            "Leonardo DiCaprio", "Tom Cruise", "Brad Pitt", "Johnny Depp", "Will Smith", 
+            "Dwayne Johnson", "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie", 
+            "Emma Watson", "Tom Hanks", "Morgan Freeman", "Christian Bale", "Ryan Reynolds", 
+            "Chris Hemsworth", "Chris Evans", "Mark Ruffalo", "Benedict Cumberbatch", "Tom Holland", 
+            "Zendaya", "Margot Robbie", "Cillian Murphy", "Joaquin Phoenix", "Matthew McConaughey", 
+            "Anne Hathaway", "Natalie Portman", "Jennifer Lawrence", "Meryl Streep", "Denzel Washington", 
+            "Samuel L. Jackson", "Hugh Jackman", "Daniel Craig", "Jason Statham", "Vin Diesel", 
+            "Paul Rudd", "Steve Carell", "Jim Carrey", "Adam Sandler", "Seth Rogen", 
+            "Jack Black", "Chris Pratt", "Zoe Saldana", "Gal Gadot", "Henry Cavill", 
+            "Ben Affleck", "Matt Damon", "George Clooney", "Nicole Kidman", "Cate Blanchett", 
+            "Emily Blunt", "Florence Pugh", "Timothée Chalamet", "Austin Butler", "Jacob Elordi", 
+            "Jenna Ortega", "Sydney Sweeney", "Ana de Armas", "Anya Taylor-Joy", "Elizabeth Olsen", 
+            "Michael B. Jordan", "Chadwick Boseman", "Pedro Pascal", "Oscar Isaac", "Andrew Garfield", 
+            "Tobey Maguire", "Rami Malek", "Mahershala Ali", "Idris Elba", "Javier Bardem", 
+            "Mads Mikkelsen", "Christoph Waltz", "Willem Dafoe", "Gary Oldman", "Anthony Hopkins", 
+            "Ian McKellen", "Patrick Stewart", "Liam Neeson", "Harrison Ford", "Sylvester Stallone", 
+            "Arnold Schwarzenegger", "Jackie Chan", "Jet Li", "Donnie Yen", "Stephen Chow", 
+            "Chow Yun-fat", "Tony Leung", "Michelle Yeoh", "Ken Watanabe", "Hiroyuki Sanada", 
+            "Lee Jung-jae", "Song Kang-ho", "Gong Yoo", "Hyun Bin", "Park Seo-jun", 
+            "Ji Chang-wook", "Lee Do-hyun", "Kim Soo-hyun", "Song Joong-ki", "Ma Dong-seok"
         ];
 
-        let baseSuperheroes = [
-            "Iron Man", "Captain America", "Thor", "Hulk", "Black Widow",
-            "Hawkeye", "Doctor Strange", "Black Panther", "Ant-Man",
-            "Superman", "Batman", "Wonder Woman", "The Flash", "Aquaman", "Wolverine"
+        // Unique 15 Superheroes
+        const superheroesList = [
+            "Spider-Man", "Iron Man", "Batman", "Superman", "Captain America", 
+            "Thor", "Wonder Woman", "The Hulk", "Black Panther", "Wolverine", 
+            "Doctor Strange", "Flash", "Aquaman", "Deadpool", "Green Lantern"
         ];
+
+        // Unique 49 Base Animals (No Bear, No Duplicates)
+        const baseAnimalsList = [
+            "Lion", "Tiger", "Elephant", "Leopard", "Cheetah", 
+            "Wolf", "Fox", "Zebra", "Giraffe", "Kangaroo", 
+            "Panda", "Gorilla", "Monkey", "Rhino", "Hippo", 
+            "Deer", "Camel", "Koala", "Otter", "Beaver", 
+            "Eagle", "Falcon", "Owl", "Penguin", "Dolphin", 
+            "Whale", "Shark", "Octopus", "Seal", "Crocodile", 
+            "Alligator", "Snake", "Lizard", "Turtle", "Frog", 
+            "Bison", "Moose", "Hyena", "Jaguar", "Panther", 
+            "Lynx", "Meerkat", "Sloth", "Lemur", "Hedgehog", 
+            "Porcupine", "Walrus", "Gazelle", "Flamingo"
+        ];
+
+        let forcedBearPosition = 4; // Default Bear position
+
+        function renderLists() {
+            // Render Celebrities
+            let celebHTML = "";
+            celebritiesList.forEach((name, index) => {
+                celebHTML += `${index + 1}. ${name}\n`;
+            });
+            document.getElementById('celebView').innerText = celebHTML;
+
+            // Render Superheroes
+            let heroHTML = "";
+            superheroesList.forEach((name, index) => {
+                heroHTML += `${index + 1}. ${name}\n`;
+            });
+            document.getElementById('heroView').innerText = heroHTML;
+
+            // Render Animals (Inserts 'Bear' dynamically at forced target position)
+            let animalHTML = "";
+            let baseIndex = 0;
+            for (let i = 1; i <= 50; i++) {
+                if (i === forcedBearPosition) {
+                    animalHTML += `${i}. Bear\n`;
+                } else {
+                    animalHTML += `${i}. ${baseAnimalsList[baseIndex]}\n`;
+                    baseIndex++;
+                }
+            }
+            document.getElementById('animalView').innerText = animalHTML;
+        }
+
+        function applyMagicChoice() {
+            let celebVal = parseInt(document.getElementById('celebNum').value) || 0;
+            let heroVal = parseInt(document.getElementById('heroNum').value) || 0;
+
+            if (celebVal > 0 && heroVal > 0) {
+                // Calculation strategy to derive dynamic position (1 to 50)
+                let calculatedTarget = Math.abs(celebVal - heroVal);
+                if (calculatedTarget === 0 || calculatedTarget > 50) {
+                    calculatedTarget = (celebVal + heroVal) % 50;
+                    if (calculatedTarget === 0) calculatedTarget = 50;
+                }
+                forcedBearPosition = calculatedTarget;
+            }
+            renderLists();
+            alert(`Set! "Bear" is now dynamically positioned at No. ${forcedBearPosition} in the Animals List.`);
+        }
 
         function openNote(type) {
             document.getElementById('folderView').style.display = 'none';
-            document.getElementById('detailView').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'flex';
+            document.getElementById('backBtn').style.display = 'inline';
 
-            const container = document.getElementById('detailView');
-            container.innerHTML = '';
+            document.getElementById('celebView').style.display = 'none';
+            document.getElementById('heroView').style.display = 'none';
+            document.getElementById('animalView').style.display = 'none';
 
-            if (type === 'celebrity') {
+            if (type === 'celebrities') {
                 document.getElementById('mainTitle').innerText = "Celebrities";
-                for (let i = 1; i <= 100; i++) {
-                    let name = baseCelebrities[(i - 1) % baseCelebrities.length];
-                    
-                    // ပရိသတ် ရွေးလိုက်သော နံပါတ်နေရာ၌ Fixed Force Name ပေါ်စေခြင်း
-                    if (i === parseInt(activeCelebNumber)) {
-                        name = fixedCelebrityForce;
-                    }
-                    
-                    container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
-                }
-            } else if (type === 'superhero') {
+                document.getElementById('celebView').style.display = 'block';
+            } else if (type === 'superheroes') {
                 document.getElementById('mainTitle').innerText = "Superheroes";
-                for (let i = 1; i <= 15; i++) {
-                    let name = baseSuperheroes[(i - 1) % baseSuperheroes.length];
-                    
-                    // ပရိသတ် ရွေးလိုက်သော နံပါတ်နေရာ၌ Fixed Force Name ပေါ်စေခြင်း
-                    if (i === parseInt(activeHeroNumber)) {
-                        name = fixedSuperheroForce;
-                    }
-                    
-                    container.innerHTML += `<div class="list-item"><span class="item-num">${i}.</span><span>${name}</span></div>`;
-                }
+                document.getElementById('heroView').style.display = 'block';
+            } else if (type === 'animals') {
+                document.getElementById('mainTitle').innerText = "Animals";
+                document.getElementById('animalView').style.display = 'block';
             }
         }
 
         function showFolderView() {
             document.getElementById('folderView').style.display = 'block';
-            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('celebView').style.display = 'none';
+            document.getElementById('heroView').style.display = 'none';
+            document.getElementById('animalView').style.display = 'none';
             document.getElementById('backBtn').style.display = 'none';
             document.getElementById('mainTitle').innerText = "Notes";
         }
 
-        function updateForceNumbers() {
-            let cNum = document.getElementById('celebNumInput').value;
-            let hNum = document.getElementById('heroNumInput').value;
-
-            if (cNum) activeCelebNumber = parseInt(cNum);
-            if (hNum) activeHeroNumber = parseInt(hNum);
-
-            // Secret Panel ကို ပုန်းအုပ်လိုက်ခြင်း
-            document.getElementById('secretPanel').style.display = 'none';
-            alert("Updated! Spectator's number is now active.");
-        }
-
-        // Title ကို ၃ ခါ နှိပ်လျှင် Control Panel ပုန်း/ပေါ် ပြုလုပ်ခြင်း
-        let titleTap = 0;
-        document.getElementById('mainTitle').addEventListener('click', () => {
-            titleTap++;
-            if (titleTap === 3) {
-                let p = document.getElementById('secretPanel');
-                p.style.display = p.style.display === 'none' ? 'block' : 'none';
-                titleTap = 0;
-            }
-        });
+        // Initial render
+        renderLists();
     </script>
 </body>
-</html>
+                </html>
+                                                           
