@@ -18,6 +18,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            user-select: none;
         }
         .container {
             width: 100%;
@@ -34,6 +35,7 @@
             margin: 0;
             color: #ffffff;
             font-weight: 700;
+            cursor: pointer;
         }
         .date-str {
             color: #8e8e93;
@@ -74,11 +76,14 @@
             color: #8e8e93;
         }
 
+        /* Hidden Secret Control Panel */
         .control-panel {
+            display: none; /* Initially Hidden */
             background: #1c1c1e;
             border-radius: 12px;
             padding: 16px;
-            border: 1px solid #2c2c2e;
+            border: 1px solid #ff9f0a;
+            margin-top: 15px;
         }
         .panel-title {
             color: #ff9f0a;
@@ -145,7 +150,7 @@
     <div class="container">
         <div class="header">
             <span class="back-btn" id="backBtn" onclick="showFolderView()">‹ Notes</span>
-            <h1 id="mainTitle">Notes</h1>
+            <h1 id="mainTitle" onclick="handleTitleTap()">Notes</h1>
         </div>
         <div class="date-str" id="currentDate">July 26, 2026</div>
 
@@ -166,8 +171,8 @@
                 </div>
             </div>
 
-            <!-- Magician Control Panel -->
-            <div class="control-panel">
+            <!-- Magician Secret Control Panel -->
+            <div class="control-panel" id="secretPanel">
                 <div class="panel-title">Magician Control Panel</div>
                 <div class="input-group">
                     <label>Celebrity Spectator's Number (1-100):</label>
@@ -181,7 +186,7 @@
                     <label>Animal Spectator's Number (1-50):</label>
                     <input type="number" id="animalNum" placeholder="Enter spectator number (e.g. 46)">
                 </div>
-                <button class="apply-btn" onclick="applyMagicChoice()">Apply Spectator Choice</button>
+                <button class="apply-btn" onclick="applyMagicChoice()">Apply & Hide Panel</button>
             </div>
         </div>
 
@@ -192,7 +197,6 @@
     </div>
 
     <script>
-        // Unique 100 Celebrities
         const celebritiesList = [
             "Leonardo DiCaprio", "Tom Cruise", "Brad Pitt", "Johnny Depp", "Will Smith", 
             "Dwayne Johnson", "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie", 
@@ -216,14 +220,12 @@
             "Ji Chang-wook", "Lee Do-hyun", "Kim Soo-hyun", "Song Joong-ki", "Ma Dong-seok"
         ];
 
-        // Unique 15 Superheroes
         const superheroesList = [
             "Spider-Man", "Iron Man", "Batman", "Superman", "Captain America", 
             "Thor", "Wonder Woman", "The Hulk", "Black Panther", "Wolverine", 
             "Doctor Strange", "Flash", "Aquaman", "Deadpool", "Green Lantern"
         ];
 
-        // Unique 49 Base Animals (No Bear, No Duplicates)
         const baseAnimalsList = [
             "Lion", "Tiger", "Elephant", "Leopard", "Cheetah", 
             "Wolf", "Fox", "Zebra", "Giraffe", "Kangaroo", 
@@ -237,7 +239,28 @@
             "Porcupine", "Walrus", "Gazelle", "Flamingo"
         ];
 
-        let forcedBearPosition = 4; // Default Bear position
+        let forcedBearPosition = 4;
+        let tapCount = 0;
+        let tapTimer = null;
+
+        // Secret Triple Tap to Toggle Control Panel
+        function handleTitleTap() {
+            tapCount++;
+            if (tapCount === 1) {
+                tapTimer = setTimeout(() => {
+                    tapCount = 0;
+                }, 1000);
+            } else if (tapCount === 3) {
+                clearTimeout(tapTimer);
+                tapCount = 0;
+                let panel = document.getElementById('secretPanel');
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                }
+            }
+        }
 
         function renderLists() {
             // Render Celebrities
@@ -254,7 +277,7 @@
             });
             document.getElementById('heroView').innerText = heroHTML;
 
-            // Render Animals (Inserts 'Bear' dynamically at target position)
+            // Render Animals
             let animalHTML = "";
             let baseIndex = 0;
             for (let i = 1; i <= 50; i++) {
@@ -273,12 +296,11 @@
 
             if (animalVal >= 1 && animalVal <= 50) {
                 forcedBearPosition = animalVal;
-            } else if (animalVal > 50) {
-                forcedBearPosition = 50;
             }
 
             renderLists();
-            alert(`Set! "Bear" is now positioned at No. ${forcedBearPosition} in Animals List.`);
+            // Automatically hide panel after applying
+            document.getElementById('secretPanel').style.display = 'none';
         }
 
         function openNote(type) {
@@ -310,8 +332,7 @@
             document.getElementById('mainTitle').innerText = "Notes";
         }
 
-        // Initial render
         renderLists();
     </script>
 </body>
-    </html>                                        
+    </html>                                     
