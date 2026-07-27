@@ -231,7 +231,7 @@
         </div>
     </div>
 
-    <!-- Secret Trigger Area (Bottom Right Corner) -->
+    <!-- Secret Trigger Area -->
     <div id="secretTrigger" onclick="openPanel()"></div>
 
     <!-- Magician Control Panel Modal -->
@@ -240,23 +240,23 @@
             <div class="modal-title">Magician Control Panel</div>
             
             <div class="input-group">
-                <span class="input-label">Celebrity Target (Format: နံပါတ်:နာမည်):</span>
-                <input type="text" class="modal-input" id="force1" placeholder="e.g. 23: Tom Cruise">
+                <span class="input-label">Celebrity Target Number (1-100):</span>
+                <input type="number" class="modal-input" id="force1" placeholder="Force Tom Cruise at e.g. 58">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Superhero Target (Format: နံပါတ်:နာမည်):</span>
-                <input type="text" class="modal-input" id="force2" placeholder="e.g. 5: Batman">
+                <span class="input-label">Superhero Target Number (1-15):</span>
+                <input type="number" class="modal-input" id="force2" placeholder="Force Spider-Man at e.g. 12">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Animal Target (Format: နံပါတ်:နာမည်):</span>
-                <input type="text" class="modal-input" id="force3" placeholder="e.g. 12: Tiger">
+                <span class="input-label">Animal Target Number (1-50):</span>
+                <input type="number" class="modal-input" id="force3" placeholder="Force Tiger at e.g. 46">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Songs Target (Format: နံပါတ်:နာမည်):</span>
-                <input type="text" class="modal-input" id="force4" placeholder="e.g. 23: Someone Like You">
+                <span class="input-label">Songs Target Number (1-100):</span>
+                <input type="number" class="modal-input" id="force4" placeholder="Force Someone Like You at e.g. 23">
             </div>
 
             <div class="modal-buttons">
@@ -310,10 +310,17 @@
         ];
 
         let forceConfig = {
-            Celebrities: { num: 0, name: "" },
-            Superheroes: { num: 0, name: "" },
-            Animals: { num: 0, name: "" },
-            Songs: { num: 0, name: "" }
+            Celebrities: 0,
+            Superheroes: 0,
+            Animals: 0,
+            Songs: 0
+        };
+
+        const targetItems = {
+            Celebrities: "Tom Cruise",
+            Superheroes: "Spider-Man",
+            Animals: "Tiger",
+            Songs: "Someone Like You"
         };
 
         function openList(category) {
@@ -333,20 +340,18 @@
             else if (category === 'Songs') { originalList = [...baseSongNames]; total = 100; }
 
             let activeList = [...originalList];
-            let config = forceConfig[category];
+            let targetNum = forceConfig[category];
+            let fixedName = targetItems[category];
 
-            // အစ်ကို Control Panel ထဲမှာ သတ်မှတ်ထားတဲ့ နံပါတ်နှင့် နာမည်ကို အဲ့ဒီနေရာမှာ တိတိကျကျ ပုံသေဖြစ်စေရန်
-            if (config.num >= 1 && config.num <= total && config.name !== "") {
-                let targetIndex = config.num - 1;
-                // အကယ်၍ အဲ့ဒီနာမည်က စာရင်းထဲမှာ အခြားနေရာမှာ ရှိနေရင် အရင်ဖယ်ထုတ်မည်
-                let existingIdx = activeList.indexOf(config.name);
+            if (targetNum >= 1 && targetNum <= total) {
+                let targetIndex = targetNum - 1;
+                let existingIdx = activeList.indexOf(fixedName);
                 if (existingIdx !== -1) {
                     activeList.splice(existingIdx, 1);
                 } else {
                     activeList.pop();
                 }
-                // သတ်မှတ်ထားသော နံပါတ်နေရာမှာ အတိအကျ ပုံသေထည့်မည်
-                activeList.splice(targetIndex, 0, config.name);
+                activeList.splice(targetIndex, 0, fixedName);
             }
 
             activeList.forEach((itemName, index) => {
@@ -379,10 +384,10 @@
         }
 
         function openPanel() {
-            document.getElementById('force1').value = forceConfig.Celebrities.num ? `${forceConfig.Celebrities.num}: ${forceConfig.Celebrities.name}` : "";
-            document.getElementById('force2').value = forceConfig.Superheroes.num ? `${forceConfig.Superheroes.num}: ${forceConfig.Superheroes.name}` : "";
-            document.getElementById('force3').value = forceConfig.Animals.num ? `${forceConfig.Animals.num}: ${forceConfig.Animals.name}` : "";
-            document.getElementById('force4').value = forceConfig.Songs.num ? `${forceConfig.Songs.num}: ${forceConfig.Songs.name}` : "";
+            document.getElementById('force1').value = forceConfig.Celebrities || "";
+            document.getElementById('force2').value = forceConfig.Superheroes || "";
+            document.getElementById('force3').value = forceConfig.Animals || "";
+            document.getElementById('force4').value = forceConfig.Songs || "";
             
             document.getElementById('controlPanel').style.display = 'flex';
         }
@@ -391,29 +396,20 @@
             document.getElementById('controlPanel').style.display = 'none';
         }
 
-        function parseInput(inputStr, totalMax) {
-            if (!inputStr.includes(':')) return { num: 0, name: "" };
-            let parts = inputStr.split(':');
-            let num = parseInt(parts[0].trim());
-            let name = parts[1].trim();
-            if (isNaN(num) || num < 1 || num > totalMax || name === "") return { num: 0, name: "" };
-            return { num: num, name: name };
-        }
-
         function applyChoices() {
-            let val1 = document.getElementById('force1').value.trim();
-            let val2 = document.getElementById('force2').value.trim();
-            let val3 = document.getElementById('force3').value.trim();
-            let val4 = document.getElementById('force4').value.trim();
+            let val1 = parseInt(document.getElementById('force1').value);
+            let val2 = parseInt(document.getElementById('force2').value);
+            let val3 = parseInt(document.getElementById('force3').value);
+            let val4 = parseInt(document.getElementById('force4').value);
 
-            forceConfig.Celebrities = parseInput(val1, 100);
-            forceConfig.Superheroes = parseInput(val2, 15);
-            forceConfig.Animals = parseInput(val3, 50);
-            forceConfig.Songs = parseInput(val4, 100);
+            forceConfig.Celebrities = (isNaN(val1) || val1 < 1 || val1 > 100) ? 0 : val1;
+            forceConfig.Superheroes = (isNaN(val2) || val2 < 1 || val2 > 15) ? 0 : val2;
+            forceConfig.Animals = (isNaN(val3) || val3 < 1 || val3 > 50) ? 0 : val3;
+            forceConfig.Songs = (isNaN(val4) || val4 < 1 || val4 > 100) ? 0 : val4;
 
             closePanel();
         }
     </script>
 </body>
     </html>
-                
+    
