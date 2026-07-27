@@ -181,16 +181,6 @@
             background-color: #2d2d2d;
             color: #fff;
         }
-
-        /* Secret Trigger Area (ညာဘက်အောက်ထောင့် ဧရိယာအကျယ်ကြီး) */
-        #secretTrigger {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            z-index: 999;
-        }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -230,9 +220,6 @@
         </div>
     </div>
 
-    <!-- Secret Trigger Area -->
-    <div id="secretTrigger" onclick="openPanel()"></div>
-
     <!-- Magician Control Panel Modal -->
     <div class="modal-overlay" id="controlPanel" onclick="event.stopPropagation()">
         <div class="modal-content">
@@ -266,11 +253,9 @@
     </div>
 
     <script>
-        // နေ့စွဲပြရန်
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
         document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
 
-        // စာရင်းဒေတာများ (Celebrities 100, Superheroes 15, Animals 50, Songs 100)
         const celebrityNames = [
             "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
             "Angelina Jolie", "Taylor Swift", "Justin Bieber", "Ariana Grande", "Selena Gomez", "Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "David Beckham", "Zendaya",
@@ -335,25 +320,25 @@
 
             let forcedVal = parseInt(forceSettings[category]);
 
-            // အကယ်၍ Force လုပ်ထားပါက ထိုနံပါတ်ကို ပထမဆုံး အနေအထားသို့ ရောက်စေရန် စီစဉ်မည်
             let itemsArray = [];
             for (let i = 1; i <= total; i++) {
-                itemsArray.push({ index: i, name: dataList[i-1] || (category + " Item " + i) });
+                itemsArray.push({ name: dataList[i-1] || (category + " Item " + i) });
             }
 
+            // အကယ်၍ Force လုပ်ထားပါက ထိုနာမည်ကို ထိပ်ဆုံးသို့ တင်မည်
             if (!isNaN(forcedVal) && forcedVal >= 1 && forcedVal <= total) {
-                let targetIndex = itemsArray.findIndex(item => item.index === forcedVal);
-                if (targetIndex > -1) {
-                    let removed = itemsArray.splice(targetIndex, 1)[0];
-                    itemsArray.unshift(removed); // Force လုပ်ထားသည်ကို ထိပ်ဆုံးသို့ တင်မည်
+                let targetIndex = forcedVal - 1;
+                if (targetIndex >= 0 && targetIndex < itemsArray.length) {
+                    let forcedItem = itemsArray.splice(targetIndex, 1)[0];
+                    itemsArray.unshift(forcedItem);
                 }
             }
 
-            // စာရင်းများကို ဖန်တီးပြသမည်
-            itemsArray.forEach(item => {
+            // အစအဆုံး နံပါတ်စဉ် 1 ကနေ သန့်သန့်ရှင်းရှင်း ပြသမည် (ညာဘက်အခြမ်းမှာ ဘာမှမပါတော့ပါ)
+            itemsArray.forEach((item, index) => {
                 let row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = `<span>${item.index}. ${item.name}</span><span style="color:#8c8c8c;">#${item.index}</span>`;
+                row.innerHTML = `<span>${index + 1}. ${item.name}</span>`;
                 container.appendChild(row);
             });
         }
@@ -363,12 +348,10 @@
             document.getElementById('mainScreen').style.display = 'flex';
         }
 
-        // Control Panel ဖွင့်ရန် (ညာဘက်အောက်ထောင့်နှိပ်၍သော်လည်းကောင်း၊ မျက်နှာပြင်ကို ၃ ချက်ဆက်တိုက်နှိပ်၍သော်လည်းကောင်း)
         let tapCount = 0;
         let tapTimer = null;
 
         function handleGlobalClick(e) {
-            // မော်ဒယ်လ်ဖွင့်ထားချိန် မပိတ်စေရန်
             if(document.getElementById('controlPanel').style.display === 'flex') return;
 
             tapCount++;
@@ -398,4 +381,5 @@
         }
     </script>
 </body>
-</html>
+                </html>
+                                            
