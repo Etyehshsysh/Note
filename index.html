@@ -1,263 +1,414 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Notes</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
         body {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
             margin: 0;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .note-container {
-            width: 100%;
-            max-width: 450px;
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            box-sizing: border-box;
-        }
-        /* Secret Trigger Area (Notes Title) */
-        .note-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ffffff;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            cursor: pointer;
             user-select: none;
-        }
-        .section-box {
-            background: #383838;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .section-title {
-            font-size: 14px;
-            color: #b0b0b0;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-        .input-row {
-            display: flex;
-            gap: 8px;
-        }
-        input, select {
-            flex: 1;
-            padding: 10px;
-            background: #222;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 6px;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 10px 15px;
-            background: #007acc;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        button:active { background: #005999; }
-        .output-text {
-            margin-top: 8px;
-            font-size: 16px;
-            color: #4cd137;
-            font-weight: bold;
+            -webkit-user-select: none;
         }
 
-        /* Magician Secret Control Panel */
-        #secretPanel {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 15, 15, 0.98);
-            z-index: 999;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
+        .container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
-        .panel-header {
+
+        .header-title {
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .date-sub {
+            color: #8c8c8c;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        /* List Items Styling */
+        .list-card {
+            background-color: #1e1e1e;
+            border-radius: 14px;
+            padding: 18px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.2s;
         }
-        .close-btn { background: #e84118; }
-        .panel-group {
-            margin-bottom: 15px;
+
+        .list-card:active {
+            background-color: #2c2c2c;
         }
-        .panel-group label {
-            display: block;
-            font-size: 13px;
-            color: #aaa;
-            margin-bottom: 5px;
+
+        .list-card span:last-child {
+            color: #8c8c8c;
+            font-size: 15px;
         }
-        .panel-group input {
+
+        /* Detail View */
+        .detail-view {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #ffb74d;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            margin-bottom: 10px;
+        }
+
+        .item-row {
+            background-color: #1e1e1e;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Magician Control Panel Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            background: #222;
-            color: white;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            border: 2px solid #ffb74d;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            color: #ffb74d;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #b0b0b0;
+        }
+
+        .modal-input {
+            background-color: #2d2d2d;
             border: 1px solid #444;
-            border-radius: 6px;
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: #ffb74d;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-apply {
+            background-color: #ffb74d;
+            color: #121212;
+        }
+
+        .btn-close {
+            background-color: #2d2d2d;
+            color: #fff;
+        }
+
+        #secretTrigger {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 999;
         }
     </style>
 </head>
-<body>
+<body onclick="handleGlobalClick(event)">
 
-    <div class="note-container">
-        <!-- ပရိသတ်မမြင်အောင် ဒီခေါင်းစဉ်စာသားကို ၂ ချက်ဆက်တိုက် (Double Tap) နှိပ်ပါက Control Panel ပွင့်ပါမည် -->
-        <div class="note-title" id="secretTrigger">My Magic Predictions 📝</div>
+    <div class="container">
+        <!-- Main List Screen -->
+        <div id="mainScreen">
+            <div class="header-title">Notes</div>
+            <div class="date-sub" id="currentDateText"></div>
 
-        <!-- Celebrity Section -->
-        <div class="section-box">
-            <div class="section-title">Celebrity (1 - 100)</div>
-            <div class="input-row">
-                <input type="number" id="numCeleb" placeholder="နံပါတ်ထည့်ရန်" min="1" max="100">
-                <button onclick="reveal('celeb')">စစ်ဆေးရန်</button>
+            <div class="list-card" onclick="openList('Celebrities')">
+                <span>Famous Celebrities</span>
+                <span>100 ›</span>
             </div>
-            <div class="output-text" id="resCeleb"></div>
+
+            <div class="list-card" onclick="openList('Superheroes')">
+                <span>Superheroes List</span>
+                <span>15 ›</span>
+            </div>
+
+            <div class="list-card" onclick="openList('Animals')">
+                <span>Animals List</span>
+                <span>50 ›</span>
+            </div>
+
+            <div class="list-card" onclick="openList('Songs')">
+                <span>Songs List</span>
+                <span>100 ›</span>
+            </div>
         </div>
 
-        <!-- Superhero Section -->
-        <div class="section-box">
-            <div class="section-title">Superhero (1 - 15)</div>
-            <div class="input-row">
-                <input type="number" id="numSuper" placeholder="နံပါတ်ထည့်ရန်" min="1" max="15">
-                <button onclick="reveal('super')">စစ်ဆေးရန်</button>
-            </div>
-            <div class="output-text" id="resSuper"></div>
-        </div>
-
-        <!-- Animal Section -->
-        <div class="section-box">
-            <div class="section-title">Animal (1 - 50)</div>
-            <div class="input-row">
-                <input type="number" id="numAnimal" placeholder="နံပါတ်ထည့်ရန်" min="1" max="50">
-                <button onclick="reveal('animal')">စစ်ဆေးရန်</button>
-            </div>
-            <div class="output-text" id="resAnimal"></div>
-        </div>
-
-        <!-- Songs Section -->
-        <div class="section-box">
-            <div class="section-title">Songs (1 - 100)</div>
-            <div class="input-row">
-                <input type="number" id="numSong" placeholder="နံပါတ်ထည့်ရန်" min="1" max="100">
-                <button onclick="reveal('song')">စစ်ဆေးရန်</button>
-            </div>
-            <div class="output-text" id="resSong"></div>
+        <!-- Detail Screen -->
+        <div id="detailScreen" class="detail-view">
+            <button class="back-btn" onclick="goBack()">‹ Back</button>
+            <div class="header-title" id="detailTitle" style="font-size: 24px;">Title</div>
+            <div id="itemListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
         </div>
     </div>
 
-    <!-- Magician Control Panel (Hidden) -->
-    <div id="secretPanel">
-        <div class="panel-header">
-            <h3>Magician Control Panel</h3>
-            <button class="close-btn" onclick="togglePanel()">ပိတ်မည်</button>
-        </div>
+    <!-- Secret Trigger Area (Bottom Right Corner) -->
+    <div id="secretTrigger" onclick="openPanel()"></div>
 
-        <div class="panel-group">
-            <label>Celebrity Force အဖြေ:</label>
-            <input type="text" id="valCeleb" value="Leonardo DiCaprio">
-        </div>
+    <!-- Magician Control Panel Modal -->
+    <div class="modal-overlay" id="controlPanel" onclick="event.stopPropagation()">
+        <div class="modal-content">
+            <div class="modal-title">Magician Control Panel</div>
+            
+            <div class="input-group">
+                <span class="input-label">Celebrity Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force1" placeholder="e.g. 23: Tom Cruise">
+            </div>
 
-        <div class="panel-group">
-            <label>Superhero Force အဖြေ:</label>
-            <input type="text" id="valSuper" value="Batman">
-        </div>
+            <div class="input-group">
+                <span class="input-label">Superhero Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force2" placeholder="e.g. 5: Batman">
+            </div>
 
-        <div class="panel-group">
-            <label>Animal Force အဖြေ:</label>
-            <input type="text" id="valAnimal" value="Bengal Tiger">
-        </div>
+            <div class="input-group">
+                <span class="input-label">Animal Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force3" placeholder="e.g. 12: Tiger">
+            </div>
 
-        <div class="panel-group">
-            <label>Songs Force အဖြေ:</label>
-            <input type="text" id="valSong" value="Bohemian Rhapsody">
-        </div>
+            <div class="input-group">
+                <span class="input-label">Songs Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force4" placeholder="e.g. 23: Someone Like You">
+            </div>
 
-        <button onclick="saveSettings()" style="width: 100%; background: #4cd137; color: black; font-weight: bold; margin-top: 10px;">သိမ်းဆည်းမည်</button>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-apply" onclick="applyChoices()">Apply Choice</button>
+                <button class="modal-btn btn-close" onclick="closePanel()">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Double Tap Trigger for Secret Panel
-        let lastTap = 0;
-        document.getElementById('secretTrigger').addEventListener('click', function() {
-            let currentTime = new Date().getTime();
-            let tapLength = currentTime - lastTap;
-            if (tapLength < 500 && tapLength > 0) {
-                togglePanel();
+        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+        document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
+
+        const baseCelebrityNames = [
+            "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
+            "Angelina Jolie", "Taylor Swift", "Justin Bieber", "Ariana Grande", "Selena Gomez", "Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "David Beckham", "Zendaya",
+            "Tom Holland", "Billie Eilish", "Drake", "Rihanna", "Beyonce", "Lady Gaga", "Bruno Mars", "Ed Sheeran", "The Weeknd", "Post Malone",
+            "Eminem", "Snoop Dogg", "Cardi B", "Nicki Minaj", "Kanye West", "Kim Kardashian", "Kylie Jenner", "Kendall Jenner", "Gigi Hadid", "Bella Hadid",
+            "Emma Watson", "Daniel Radcliffe", "Rupert Grint", "Robert Pattinson", "Jennifer Lawrence", "Margot Robbie", "Ryan Reynolds", "Hugh Jackman", "Chris Evans", "Mark Ruffalo",
+            "Tom Hiddleston", "Benedict Cumberbatch", "Henry Cavill", "Ben Affleck", "Gal Gadot", "Jason Momoa", "Ezra Miller", "Anne Hathaway", "Natalie Portman", "Mila Kunis",
+            "Megan Fox", "Zac Efron", "Channing Tatum", "Vin Diesel", "Paul Walker", "Jason Statham", "Sylvester Stallone", "Arnold Schwarzenegger", "Jackie Chan", "Jet Li",
+            "Bruce Lee", "Rowan Atkinson", "Jim Carrey", "Adam Sandler", "Will Ferrell", "Kevin Hart", "Dwayne Johnson", "Jackie Chan", "Tom Hanks", "Morgan Freeman",
+            "Brad Pitt", "Johnny Depp", "Leonardo DiCaprio", "Matt Damon", "Ben Affleck", "George Clooney", "Julia Roberts", "Sandra Bullock", "Nicole Kidman", "Reese Witherspoon",
+            "Halle Berry", "Salma Hayek", "Penelope Cruz", "Cameron Diaz", "Drew Barrymore", "Charlize Theron", "Anne Hathaway", "Meryl Streep", "Cate Blanchett", "Florence Pugh"
+        ];
+
+        const baseSuperheroNames = [
+            "Spider-Man", "Batman", "Superman", "Iron Man", "Wonder Woman", "Captain America", "Thor", "The Flash", "Hulk", "Black Panther",
+            "Deadpool", "Doctor Strange", "Wolverine", "Aquaman", "Green Lantern"
+        ];
+
+        const baseAnimalNames = [
+            "Lion", "Tiger", "Elephant", "Giraffe", "Zebra", "Cheetah", "Leopard", "Kangaroo", "Panda", "Koala",
+            "Wolf", "Fox", "Bear", "Gorilla", "Chimpanzee", "Rhinoceros", "Hippopotamus", "Crocodile", "Alligator", "Snake",
+            "Eagle", "Owl", "Hawk", "Penguin", "Dolphin", "Whale", "Shark", "Octopus", "Turtle", "Rabbit",
+            "Deer", "Horse", "Donkey", "Camel", "Buffalo", "Bison", "Owl", "Bat", "Hedgehog", "Squirrel",
+            "Raccoon", "Beaver", "Otter", "Seal", "Walrus", "Flamingo", "Peacock", "Parrot", "Swan", "Ostrich"
+        ];
+
+        const baseSongNames = [
+            "Blinding Lights", "Shape of You", "Dance Monkey", "Someone Like You", "Rolling in the Deep", "Bad Guy", "Watermelon Sugar", "Levitating", "Stay", "Peaches",
+            "As It Was", "Heat Waves", "Flowers", "Anti-Hero", "Kill Bill", "Levitating", "Dynamite", "Butter", "Permission to Dance", "Boy With Luv",
+            "Old Town Road", "Circles", "Sunflower", "Rockstar", "Congratulations", "God's Plan", "One Dance", "Havana", "Senorita", "Closer",
+            "Despacito", "Lean On", "Sugar", "Thinking Out Loud", "Photograph", "Perfect", "Halo", "Single Ladies", "Rolling in the Deep", "Set Fire to the Rain",
+            "Counting Stars", "Radioactive", "Demons", "Believer", "Thunder", "Enemy", "Enemy", "Enemy", "Enemy", "Enemy",
+            "Mockingbird", "Lose Yourself", "Without Me", "Not Afraid", "Love Yourself", "Sorry", "Baby", "Yummy", "Ghost", "Holy",
+            "Senorita", "Treat You Better", "In My Blood", "Stitches", "Attention", "How Long", "We Don't Talk Anymore", "Dangerously", "The Way I Am", "Done For Me",
+            "Payphone", "Moves Like Jagger", "Sugar", "Animals", "Maps", "One More Night", "This Love", "She Will Be Loved", "Memories", "Girls Like You",
+            "Drivers License", "Good 4 U", "Traitor", "Deja Vu", "Vampire", "Bad Idea Right?", "Happier Than Ever", "Ocean Eyes", "When the Party's Over", "Lovely",
+            "Starboy", "Can't Feel My Face", "The Hills", "I Feel It Coming", "Save Your Tears", "Die For You", "One of the Girls", "Starships", "Super Bass", "Anaconda"
+        ];
+
+        let forceConfig = {
+            Celebrities: { num: 0, name: "" },
+            Superheroes: { num: 0, name: "" },
+            Animals: { num: 0, name: "" },
+            Songs: { num: 0, name: "" }
+        };
+
+        function openList(category) {
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('detailScreen').style.display = 'flex';
+            document.getElementById('detailTitle').innerText = category + " List";
+
+            let container = document.getElementById('itemListContainer');
+            container.innerHTML = "";
+
+            let originalList = [];
+            let total = 0;
+
+            if (category === 'Celebrities') { originalList = [...baseCelebrityNames]; total = 100; }
+            else if (category === 'Superheroes') { originalList = [...baseSuperheroNames]; total = 15; }
+            else if (category === 'Animals') { originalList = [...baseAnimalNames]; total = 50; }
+            else if (category === 'Songs') { originalList = [...baseSongNames]; total = 100; }
+
+            let activeList = [...originalList];
+            let config = forceConfig[category];
+
+            if (config.num >= 1 && config.num <= total && config.name !== "") {
+                let targetIndex = config.num - 1;
+                let existingIdx = activeList.indexOf(config.name);
+                if (existingIdx !== -1) {
+                    activeList.splice(existingIdx, 1);
+                } else {
+                    activeList.pop();
+                }
+                activeList.splice(targetIndex, 0, config.name);
             }
-            lastTap = currentTime;
-        });
 
-        function togglePanel() {
-            let panel = document.getElementById('secretPanel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            activeList.forEach((itemName, index) => {
+                let row = document.createElement('div');
+                row.className = 'item-row';
+                row.innerHTML = `<span>${index + 1}. ${itemName}</span>`;
+                container.appendChild(row);
+            });
         }
 
-        function saveSettings() {
-            localStorage.setItem('f_celeb', document.getElementById('valCeleb').value);
-            localStorage.setItem('f_super', document.getElementById('valSuper').value);
-            localStorage.setItem('f_animal', document.getElementById('valAnimal').value);
-            localStorage.setItem('f_song', document.getElementById('valSong').value);
-            alert("သိမ်းဆည်းပြီးပါပြီ!");
-            togglePanel();
+        function goBack() {
+            document.getElementById('detailScreen').style.display = 'none';
+            document.getElementById('mainScreen').style.display = 'flex';
         }
 
-        // Load saved settings on startup
-        window.onload = function() {
-            if(localStorage.getItem('f_celeb')) document.getElementById('valCeleb').value = localStorage.getItem('f_celeb');
-            if(localStorage.getItem('f_super')) document.getElementById('valSuper').value = localStorage.getItem('f_super');
-            if(localStorage.getItem('f_animal')) document.getElementById('valAnimal').value = localStorage.getItem('f_animal');
-            if(localStorage.getItem('f_song')) document.getElementById('valSong').value = localStorage.getItem('f_song');
+        let tapCount = 0;
+        let tapTimer = null;
+
+        function handleGlobalClick(e) {
+            if(document.getElementById('controlPanel').style.display === 'flex') return;
+
+            tapCount++;
+            if (tapCount === 1) {
+                tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+            } else if (tapCount === 3) {
+                clearTimeout(tapTimer);
+                tapCount = 0;
+                openPanel();
+            }
         }
 
-        function reveal(type) {
-            let val = "", numId = "", resId = "";
+        function openPanel() {
+            document.getElementById('force1').value = forceConfig.Celebrities.num ? `${forceConfig.Celebrities.num}: ${forceConfig.Celebrities.name}` : "";
+            document.getElementById('force2').value = forceConfig.Superheroes.num ? `${forceConfig.Superheroes.num}: ${forceConfig.Superheroes.name}` : "";
+            document.getElementById('force3').value = forceConfig.Animals.num ? `${forceConfig.Animals.num}: ${forceConfig.Animals.name}` : "";
+            document.getElementById('force4').value = forceConfig.Songs.num ? `${forceConfig.Songs.num}: ${forceConfig.Songs.name}` : "";
             
-            if(type === 'celeb') {
-                val = localStorage.getItem('f_celeb') || document.getElementById('valCeleb').value;
-                numId = document.getElementById('numCeleb').value;
-                resId = document.getElementById('resCeleb');
-            } else if(type === 'super') {
-                val = localStorage.getItem('f_super') || document.getElementById('valSuper').value;
-                numId = document.getElementById('numSuper').value;
-                resId = document.getElementById('resSuper');
-            } else if(type === 'animal') {
-                val = localStorage.getItem('f_animal') || document.getElementById('valAnimal').value;
-                numId = document.getElementById('numAnimal').value;
-                resId = document.getElementById('resAnimal');
-            } else if(type === 'song') {
-                val = localStorage.getItem('f_song') || document.getElementById('valSong').value;
-                numId = document.getElementById('numSong').value;
-                resId = document.getElementById('resSong');
-            }
+            document.getElementById('controlPanel').style.display = 'flex';
+        }
 
-            if(!numId) {
-                resId.innerHTML = "ကျေးဇူးပြု၍ နံပါတ်ထည့်ပါ";
-                return;
-            }
+        function closePanel() {
+            document.getElementById('controlPanel').style.display = 'none';
+        }
 
-            // ပရိသတ်ဘယ်နံပါတ်ပဲထည့်ထည့် Control Panel က အဖြေကိုသာ အတိအကျပြသမည်
-            resId.innerHTML = `➔ အဖြေ: ${val}`;
+        function parseInput(inputStr, totalMax) {
+            if (!inputStr.includes(':')) return { num: 0, name: "" };
+            let parts = inputStr.split(':');
+            let num = parseInt(parts[0].trim());
+            let name = parts[1].trim();
+            if (isNaN(num) || num < 1 || num > totalMax || name === "") return { num: 0, name: "" };
+            return { num: num, name: name };
+        }
+
+        function applyChoices() {
+            let val1 = document.getElementById('force1').value.trim();
+            let val2 = document.getElementById('force2').value.trim();
+            let val3 = document.getElementById('force3').value.trim();
+            let val4 = document.getElementById('force4').value.trim();
+
+            forceConfig.Celebrities = parseInput(val1, 100);
+            forceConfig.Superheroes = parseInput(val2, 15);
+            forceConfig.Animals = parseInput(val3, 50);
+            forceConfig.Songs = parseInput(val4, 100);
+
+            closePanel();
         }
     </script>
 </body>
