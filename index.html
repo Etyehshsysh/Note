@@ -3,208 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TH Magic Force App</title>
+    <title>My Notes</title>
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
-        .container {
+        .note-container {
             width: 100%;
-            max-width: 400px;
-            background: #1e1e1e;
+            max-width: 450px;
+            background: #2d2d2d;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-sizing: border-box;
         }
-        h2 { margin-bottom: 20px; color: #00adb5; }
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+        /* Secret Trigger Area (Notes Title) */
+        .note-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .section-box {
+            background: #383838;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 14px;
+            color: #b0b0b0;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+        input, select {
+            flex: 1;
+            padding: 10px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
         }
         button {
-            padding: 12px;
-            background: #393e46;
+            padding: 10px 15px;
+            background: #007acc;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        button:active { background: #00adb5; }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: #2b2d42;
-            color: white;
-            border: 1px solid #4f5d75;
             border-radius: 6px;
-            box-sizing: border-box;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:active { background: #005999; }
+        .output-text {
+            margin-top: 8px;
             font-size: 16px;
+            color: #4cd137;
+            font-weight: bold;
         }
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #222831;
-            border-radius: 8px;
-            font-size: 18px;
-            border: 1px dashed #00adb5;
-        }
-        /* Hidden Magician Control Panel */
-        #secret-panel {
+
+        /* Magician Secret Control Panel */
+        #secretPanel {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(15, 15, 15, 0.98);
             z-index: 999;
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
         }
-        .secret-header {
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .close-btn { background: #e84118; }
+        .panel-group {
             margin-bottom: 15px;
         }
-        .close-btn { background: #ff4c29; width: auto; padding: 5px 15px; }
-        .tap-trigger {
-            position: fixed;
-            top: 0; left: 0; width: 50px; height: 50px;
-            z-index: 998;
+        .panel-group label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .panel-group input {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
 
-    <!-- ဘယ်ဘက်ထောင့်အစွန်ကို နှစ်ချက်နှိပ်ပါက Secret Panel ပွင့်ရန် -->
-    <div class="tap-trigger" id="tapTrigger"></div>
+    <div class="note-container">
+        <!-- ပရိသတ်မမြင်အောင် ဒီခေါင်းစဉ်စာသားကို ၂ ချက်ဆက်တိုက် (Double Tap) နှိပ်ပါက Control Panel ပွင့်ပါမည် -->
+        <div class="note-title" id="secretTrigger">My Magic Predictions 📝</div>
 
-    <div class="container">
-        <h2>Mentalism Force App</h2>
-        
-        <label>အမျိုးအစား ရွေးချယ်ပါ:</label>
-        <select id="categorySelect" onchange="updateMaxRange()">
-            <option value="celebrity">Celebrity (1 - 100)</option>
-            <option value="superhero">Superhero (1 - 15)</option>
-            <option value="animal">Animal (1 - 50)</option>
-            <option value="songs">Songs (1 - 100)</option>
-        </select>
+        <!-- Celebrity Section -->
+        <div class="section-box">
+            <div class="section-title">Celebrity (1 - 100)</div>
+            <div class="input-row">
+                <input type="number" id="numCeleb" placeholder="နံပါတ်ထည့်ရန်" min="1" max="100">
+                <button onclick="reveal('celeb')">စစ်ဆေးရန်</button>
+            </div>
+            <div class="output-text" id="resCeleb"></div>
+        </div>
 
-        <label>သင်ကြိုက်နှစ်သက်ရာ နံပါတ်ကို ထည့်ပါ:</label>
-        <input type="number" id="userNumber" placeholder="နံပါတ်ထည့်ရန်..." min="1">
+        <!-- Superhero Section -->
+        <div class="section-box">
+            <div class="section-title">Superhero (1 - 15)</div>
+            <div class="input-row">
+                <input type="number" id="numSuper" placeholder="နံပါတ်ထည့်ရန်" min="1" max="15">
+                <button onclick="reveal('super')">စစ်ဆေးရန်</button>
+            </div>
+            <div class="output-text" id="resSuper"></div>
+        </div>
 
-        <button onclick="revealResult()">ရလဒ်ကို ကြည့်မည်</button>
+        <!-- Animal Section -->
+        <div class="section-box">
+            <div class="section-title">Animal (1 - 50)</div>
+            <div class="input-row">
+                <input type="number" id="numAnimal" placeholder="နံပါတ်ထည့်ရန်" min="1" max="50">
+                <button onclick="reveal('animal')">စစ်ဆေးရန်</button>
+            </div>
+            <div class="output-text" id="resAnimal"></div>
+        </div>
 
-        <div class="result-box" id="resultDisplay">ရလဒ်သည် ဤနေရာတွင် ပေါ်လာမည်...</div>
+        <!-- Songs Section -->
+        <div class="section-box">
+            <div class="section-title">Songs (1 - 100)</div>
+            <div class="input-row">
+                <input type="number" id="numSong" placeholder="နံပါတ်ထည့်ရန်" min="1" max="100">
+                <button onclick="reveal('song')">စစ်ဆေးရန်</button>
+            </div>
+            <div class="output-text" id="resSong"></div>
+        </div>
     </div>
 
-    <!-- Magician Control Panel -->
-    <div id="secret-panel">
-        <div class="secret-header">
+    <!-- Magician Control Panel (Hidden) -->
+    <div id="secretPanel">
+        <div class="panel-header">
             <h3>Magician Control Panel</h3>
-            <button class="close-btn" onclick="toggleSecretPanel()">ပိတ်မည်</button>
+            <button class="close-btn" onclick="togglePanel()">ပိတ်မည်</button>
         </div>
-        <p style="font-size: 14px; color: #aaa;">ပရိသတ်မမြင်စေဘဲ Force လုပ်မည့် အဖြေများကို ဤနေရာတွင် ကြိုတင်သတ်မှတ်ပါ။</p>
-        
-        <label>Celebrity Force အဖြေ (1 - 100):</label>
-        <input type="text" id="forceCelebrity" value="Leonardo DiCaprio">
 
-        <label>Superhero Force အဖြေ (1 - 15):</label>
-        <input type="text" id="forceSuperhero" value="Batman">
+        <div class="panel-group">
+            <label>Celebrity Force အဖြေ:</label>
+            <input type="text" id="valCeleb" value="Leonardo DiCaprio">
+        </div>
 
-        <label>Animal Force အဖြေ (1 - 50):</label>
-        <input type="text" id="forceAnimal" value="Bengal Tiger">
+        <div class="panel-group">
+            <label>Superhero Force အဖြေ:</label>
+            <input type="text" id="valSuper" value="Batman">
+        </div>
 
-        <label>Songs Force အဖြေ (1 - 100):</label>
-        <input type="text" id="forceSongs" value="Bohemian Rhapsody">
+        <div class="panel-group">
+            <label>Animal Force အဖြေ:</label>
+            <input type="text" id="valAnimal" value="Bengal Tiger">
+        </div>
 
-        <button onclick="saveSettings()" style="background: #00adb5; margin-top: 15px;">အပြောင်းအလဲများကို သိမ်းမည်</button>
+        <div class="panel-group">
+            <label>Songs Force အဖြေ:</label>
+            <input type="text" id="valSong" value="Bohemian Rhapsody">
+        </div>
+
+        <button onclick="saveSettings()" style="width: 100%; background: #4cd137; color: black; font-weight: bold; margin-top: 10px;">သိမ်းဆည်းမည်</button>
     </div>
 
     <script>
-        // Secret Panel ကို ဘယ်ဘက်ထောင့်အစွန်ပေါ် ၂ ချက်နှိပ်ခြင်းဖြင့် ဖွင့်ရန်
+        // Double Tap Trigger for Secret Panel
         let lastTap = 0;
-        document.getElementById('tapTrigger').addEventListener('click', function() {
+        document.getElementById('secretTrigger').addEventListener('click', function() {
             let currentTime = new Date().getTime();
             let tapLength = currentTime - lastTap;
             if (tapLength < 500 && tapLength > 0) {
-                toggleSecretPanel();
+                togglePanel();
             }
             lastTap = currentTime;
         });
 
-        function toggleSecretPanel() {
-            let panel = document.getElementById('secret-panel');
+        function togglePanel() {
+            let panel = document.getElementById('secretPanel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
         }
 
-        function updateMaxRange() {
-            let cat = document.getElementById('categorySelect').value;
-            let input = document.getElementById('userNumber');
-            if (cat === 'superhero') {
-                input.max = 15;
-            } else if (cat === 'animal') {
-                input.max = 50;
-            } else {
-                input.max = 100;
-            }
-        }
-
         function saveSettings() {
-            localStorage.setItem('force_celebrity', document.getElementById('forceCelebrity').value);
-            localStorage.setItem('force_superhero', document.getElementById('forceSuperhero').value);
-            localStorage.setItem('force_animal', document.getElementById('forceAnimal').value);
-            localStorage.setItem('force_songs', document.getElementById('forceSongs').value);
-            alert("အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!");
-            toggleSecretPanel();
+            localStorage.setItem('f_celeb', document.getElementById('valCeleb').value);
+            localStorage.setItem('f_super', document.getElementById('valSuper').value);
+            localStorage.setItem('f_animal', document.getElementById('valAnimal').value);
+            localStorage.setItem('f_song', document.getElementById('valSong').value);
+            alert("သိမ်းဆည်းပြီးပါပြီ!");
+            togglePanel();
         }
 
-        // စတင်ချိန်တွင် သိမ်းဆည်းထားသည်များကို ပြန်ဖော်ရန်
+        // Load saved settings on startup
         window.onload = function() {
-            if(localStorage.getItem('force_celebrity')) document.getElementById('forceCelebrity').value = localStorage.getItem('force_celebrity');
-            if(localStorage.getItem('force_superhero')) document.getElementById('forceSuperhero').value = localStorage.getItem('force_superhero');
-            if(localStorage.getItem('force_animal')) document.getElementById('forceAnimal').value = localStorage.getItem('force_animal');
-            if(localStorage.getItem('force_songs')) document.getElementById('forceSongs').value = localStorage.getItem('force_songs');
+            if(localStorage.getItem('f_celeb')) document.getElementById('valCeleb').value = localStorage.getItem('f_celeb');
+            if(localStorage.getItem('f_super')) document.getElementById('valSuper').value = localStorage.getItem('f_super');
+            if(localStorage.getItem('f_animal')) document.getElementById('valAnimal').value = localStorage.getItem('f_animal');
+            if(localStorage.getItem('f_song')) document.getElementById('valSong').value = localStorage.getItem('f_song');
         }
 
-        function revealResult() {
-            let category = document.getElementById('categorySelect').value;
-            let num = document.getElementById('userNumber').value;
-            let display = document.getElementById('resultDisplay');
+        function reveal(type) {
+            let val = "", numId = "", resId = "";
+            
+            if(type === 'celeb') {
+                val = localStorage.getItem('f_celeb') || document.getElementById('valCeleb').value;
+                numId = document.getElementById('numCeleb').value;
+                resId = document.getElementById('resCeleb');
+            } else if(type === 'super') {
+                val = localStorage.getItem('f_super') || document.getElementById('valSuper').value;
+                numId = document.getElementById('numSuper').value;
+                resId = document.getElementById('resSuper');
+            } else if(type === 'animal') {
+                val = localStorage.getItem('f_animal') || document.getElementById('valAnimal').value;
+                numId = document.getElementById('numAnimal').value;
+                resId = document.getElementById('resAnimal');
+            } else if(type === 'song') {
+                val = localStorage.getItem('f_song') || document.getElementById('valSong').value;
+                numId = document.getElementById('numSong').value;
+                resId = document.getElementById('resSong');
+            }
 
-            if(!num) {
-                display.innerHTML = "ကျေးဇူးပြု၍ နံပါတ်တစ်ခု ထည့်ပါ။";
+            if(!numId) {
+                resId.innerHTML = "ကျေးဇူးပြု၍ နံပါတ်ထည့်ပါ";
                 return;
             }
 
-            let forcedResult = "";
-            if(category === 'celebrity') {
-                forcedResult = localStorage.getItem('force_celebrity') || "Leonardo DiCaprio";
-            } else if(category === 'superhero') {
-                forcedResult = localStorage.getItem('force_superhero') || "Batman";
-            } else if(category === 'animal') {
-                forcedResult = localStorage.getItem('force_animal') || "Bengal Tiger";
-            } else if(category === 'songs') {
-                forcedResult = localStorage.getItem('force_songs') || "Bohemian Rhapsody";
-            }
-
-            // ပရိသတ်ထည့်လိုက်တဲ့ နံပါတ် ဘာပဲဖြစ်နေပါစေ Control Panel မှာ သတ်မှတ်ထားတဲ့ အဖြေအတိုင်း ထွက်စေရန်
-            display.innerHTML = `ရွေးချယ်ထားသော နံပါတ် (${num}) အတွက် အဖြေ: <br><strong style="color: #00adb5; font-size: 22px;">${forcedResult}</strong>`;
+            // ပရိသတ်ဘယ်နံပါတ်ပဲထည့်ထည့် Control Panel က အဖြေကိုသာ အတိအကျပြသမည်
+            resId.innerHTML = `➔ အဖြေ: ${val}`;
         }
     </script>
 </body>
-</html>
+    </html>
+    
