@@ -10,7 +10,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background-color: #000000;
+            background-color: #121212;
             color: #ffffff;
             margin: 0;
             padding: 20px;
@@ -19,366 +19,240 @@
             align-items: center;
             min-height: 100vh;
             user-select: none;
+            -webkit-user-select: none;
         }
+
         .container {
             width: 100%;
-            max-width: 400px;
-        }
-        .header {
+            max-width: 450px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        h1 {
-            font-size: 32px;
-            margin: 0;
-            color: #ffffff;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .date-str {
-            color: #8e8e93;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-        .back-btn {
-            color: #ff9f0a;
-            font-size: 17px;
-            cursor: pointer;
-            display: none;
-        }
-        
-        .notes-list {
-            background: #1c1c1e;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .note-item {
-            padding: 16px;
-            border-bottom: 1px solid #38383a;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .note-item:last-child {
-            border-bottom: none;
-        }
-        .note-item-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-        .note-item-count {
-            font-size: 15px;
-            color: #8e8e93;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* Hidden Secret Control Panel */
-        .control-panel {
-            display: none;
-            background: #1c1c1e;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #ff9f0a;
-            margin-top: 15px;
-            position: relative;
+        .header-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 0;
         }
-        .panel-title {
-            color: #ff9f0a;
-            text-align: center;
+
+        .date-sub {
+            color: #8c8c8c;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* List Items Styling */
+        .list-card {
+            background-color: #1e1e1e;
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .input-group {
-            margin-bottom: 12px;
-        }
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            color: #8e8e93;
-            margin-bottom: 5px;
-        }
-        .input-group input {
-            width: 100%;
-            background: #2c2c2e;
-            border: 1px solid #38383a;
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: #ffffff;
+
+        .list-card span:last-child {
+            color: #8c8c8c;
             font-size: 15px;
+        }
+
+        /* Magician Control Panel Modal */
+        .modal-overlay {
+            display: flex; /* ပုံစံပြရန် ခဏပြထားသည်၊ လိုသလို ပိတ်မည် */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            border: 2px solid #ffb74d;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            color: #ffb74d;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #b0b0b0;
+        }
+
+        .modal-input {
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 13px;
             outline: none;
         }
-        .input-group input::placeholder {
-            color: #55555e;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .apply-btn {
-            flex: 2;
-            background: #ff9f0a;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .close-btn {
-            flex: 1;
-            background: #3a3a3c;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .apply-btn:active, .close-btn:active {
-            opacity: 0.8;
+
+        .modal-input:focus {
+            border-color: #ffb74d;
         }
 
-        .detail-view {
-            display: none;
-            background: #1c1c1e;
-            border-radius: 12px;
-            padding: 18px;
-            min-height: 400px;
-            max-height: 550px;
-            overflow-y: auto;
-            white-space: pre-line;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #e5e5ea;
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-apply {
+            background-color: #ffb74d;
+            color: #121212;
+        }
+
+        .btn-close {
+            background-color: #2d2d2d;
+            color: #fff;
+        }
+
+        /* Secret Touch Area (ညာဘက်အောက်ထောင့်) */
+        #secretTrigger {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header">
-            <span class="back-btn" id="backBtn" onclick="showFolderView()">‹ Notes</span>
-            <h1 id="mainTitle" onclick="handleTitleTap()">Notes</h1>
-        </div>
-        <div class="date-str" id="currentDate">July 26, 2026</div>
+        <div class="header-title">Notes</div>
+        <div class="date-sub" id="currentDateText">July 26, 2026</div>
 
-        <!-- Main Folder View -->
-        <div id="folderView">
-            <div class="notes-list">
-                <div class="note-item" onclick="openNote('celebrities')">
-                    <span class="note-item-title">Famous Celebrities</span>
-                    <span class="note-item-count">100 ›</span>
-                </div>
-                <div class="note-item" onclick="openNote('superheroes')">
-                    <span class="note-item-title">Superheroes List</span>
-                    <span class="note-item-count">15 ›</span>
-                </div>
-                <div class="note-item" onclick="openNote('animals')">
-                    <span class="note-item-title">Animals List</span>
-                    <span class="note-item-count">50 ›</span>
-                </div>
-            </div>
-
-            <!-- Magician Secret Control Panel -->
-            <div class="control-panel" id="secretPanel">
-                <div class="panel-title">Magician Control Panel</div>
-                <div class="input-group">
-                    <label>Celebrity Target Number (1-100):</label>
-                    <input type="number" id="celebNum" placeholder="Force Tom Cruise at e.g. 58">
-                </div>
-                <div class="input-group">
-                    <label>Superhero Target Number (1-15):</label>
-                    <input type="number" id="heroNum" placeholder="Force Spider-Man at e.g. 12">
-                </div>
-                <div class="input-group">
-                    <label>Animal Target Number (1-50):</label>
-                    <input type="number" id="animalNum" placeholder="Force Bear at e.g. 46">
-                </div>
-                <div class="btn-group">
-                    <button class="apply-btn" onclick="applyMagicChoice()">Apply Choice</button>
-                    <button class="close-btn" onclick="hidePanel()">Close</button>
-                </div>
-            </div>
+        <div class="list-card">
+            <span>Famous Celebrities</span>
+            <span>100 ›</span>
         </div>
 
-        <!-- Detail Views -->
-        <div class="detail-view" id="celebView"></div>
-        <div class="detail-view" id="heroView"></div>
-        <div class="detail-view" id="animalView"></div>
+        <div class="list-card">
+            <span>Superheroes List</span>
+            <span>15 ›</span>
+        </div>
+
+        <div class="list-card">
+            <span>Animals List</span>
+            <span>50 ›</span>
+        </div>
+
+        <div class="list-card">
+            <span>Songs List</span>
+            <span>100 ›</span>
+        </div>
+    </div>
+
+    <!-- Secret Touch Area to open Panel -->
+    <div id="secretTrigger" onclick="handleSecretTap()"></div>
+
+    <!-- Magician Control Panel Modal -->
+    <div class="modal-overlay" id="controlPanel">
+        <div class="modal-content">
+            <div class="modal-title">Magician Control Panel</div>
+            
+            <div class="input-group">
+                <span class="input-label">Celebrity Target Number (1-100):</span>
+                <input type="text" class="modal-input" id="force1" placeholder="Force Tom Cruise at e.g. 58">
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">Superhero Target Number (1-15):</span>
+                <input type="text" class="modal-input" id="force2" placeholder="Force Spider-Man at e.g. 12">
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">Animal Target Number (1-50):</span>
+                <input type="text" class="modal-input" id="force3" placeholder="Force Bear at e.g. 46">
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">Songs Target Number (1-100):</span>
+                <input type="text" class="modal-input" id="force4" placeholder="Force Song at e.g. 35">
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn btn-apply" onclick="applyChoices()">Apply Choice</button>
+                <button class="modal-btn btn-close" onclick="closePanel()">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Force Target Items
-        const FORCE_CELEB = "Tom Cruise";
-        const FORCE_HERO = "Spider-Man";
-        const FORCE_ANIMAL = "Bear";
-
-        // Unique Base Lists (Strictly zero overlapping names)
-        const baseCelebritiesList = [
-            "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Dwayne Johnson", 
-            "Keanu Reeves", "Robert Downey Jr.", "Scarlett Johansson", "Angelina Jolie", "Emma Watson", 
-            "Tom Hanks", "Morgan Freeman", "Christian Bale", "Ryan Reynolds", "Chris Hemsworth", 
-            "Chris Evans", "Mark Ruffalo", "Benedict Cumberbatch", "Tom Holland", "Zendaya", 
-            "Margot Robbie", "Cillian Murphy", "Joaquin Phoenix", "Matthew McConaughey", "Anne Hathaway", 
-            "Natalie Portman", "Jennifer Lawrence", "Meryl Streep", "Denzel Washington", "Samuel L. Jackson", 
-            "Hugh Jackman", "Daniel Craig", "Jason Statham", "Vin Diesel", "Paul Rudd", 
-            "Steve Carell", "Jim Carrey", "Adam Sandler", "Seth Rogen", "Jack Black", 
-            "Chris Pratt", "Zoe Saldana", "Gal Gadot", "Henry Cavill", "Ben Affleck", 
-            "Matt Damon", "George Clooney", "Nicole Kidman", "Cate Blanchett", "Emily Blunt", 
-            "Florence Pugh", "Timothée Chalamet", "Austin Butler", "Jacob Elordi", "Jenna Ortega", 
-            "Sydney Sweeney", "Ana de Armas", "Anya Taylor-Joy", "Elizabeth Olsen", "Michael B. Jordan", 
-            "Chadwick Boseman", "Pedro Pascal", "Oscar Isaac", "Andrew Garfield", "Tobey Maguire", 
-            "Rami Malek", "Mahershala Ali", "Idris Elba", "Javier Bardem", "Mads Mikkelsen", 
-            "Christoph Waltz", "Willem Dafoe", "Gary Oldman", "Anthony Hopkins", "Ian McKellen", 
-            "Patrick Stewart", "Liam Neeson", "Harrison Ford", "Sylvester Stallone", "Arnold Schwarzenegger", 
-            "Jackie Chan", "Jet Li", "Donnie Yen", "Stephen Chow", "Chow Yun-fat", 
-            "Tony Leung", "Michelle Yeoh", "Ken Watanabe", "Hiroyuki Sanada", "Lee Jung-jae", 
-            "Song Kang-ho", "Gong Yoo", "Hyun Bin", "Park Seo-jun", "Ji Chang-wook", 
-            "Lee Do-hyun", "Kim Soo-hyun", "Song Joong-ki", "Ma Dong-seok"
-        ];
-
-        const baseSuperheroesList = [
-            "Iron Man", "Batman", "Superman", "Captain America", "Thor", 
-            "Wonder Woman", "The Hulk", "Black Panther", "Doctor Strange", 
-            "Flash", "Aquaman", "Deadpool", "Green Lantern", "Cyborg"
-        ];
-
-        const baseAnimalsList = [
-            "Lion", "Tiger", "Elephant", "Leopard", "Cheetah", 
-            "Wolf", "Fox", "Zebra", "Giraffe", "Kangaroo", 
-            "Panda", "Gorilla", "Monkey", "Rhino", "Hippo", 
-            "Deer", "Camel", "Koala", "Otter", "Beaver", 
-            "Eagle", "Owl", "Penguin", "Dolphin", "Whale", 
-            "Shark", "Octopus", "Seal", "Crocodile", "Alligator", 
-            "Snake", "Lizard", "Turtle", "Frog", "Bison", 
-            "Moose", "Hyena", "Jaguar", "Panther", "Lynx", 
-            "Meerkat", "Sloth", "Lemur", "Hedgehog", "Porcupine", 
-            "Walrus", "Gazelle", "Flamingo", "Chameleon"
-        ];
-
-        // Active Target Positions
-        let forcedCelebPosition = 2;
-        let forcedHeroPosition = 1;
-        let forcedAnimalPosition = 4;
+        // လက်ရှိနေ့စွဲကို အလိုအလျောက်ဖော်ပြရန်
+        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+        document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
 
         let tapCount = 0;
         let tapTimer = null;
 
-        // Triple Tap Header to Toggle Secret Panel
-        function handleTitleTap() {
+        function handleSecretTap() {
             tapCount++;
             if (tapCount === 1) {
-                tapTimer = setTimeout(() => {
-                    tapCount = 0;
-                }, 1000);
-            } else if (tapCount === 3) {
+                tapTimer = setTimeout(() => { tapCount = 0; }, 400);
+            } else if (tapCount === 2) {
                 clearTimeout(tapTimer);
                 tapCount = 0;
-                let panel = document.getElementById('secretPanel');
-                panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+                document.getElementById('controlPanel').style.display = 'flex';
             }
         }
 
-        function hidePanel() {
-            document.getElementById('secretPanel').style.display = 'none';
+        function closePanel() {
+            document.getElementById('controlPanel').style.display = 'none';
         }
 
-        // Render Lists
-        function renderLists() {
-            // Celebrities
-            let celebHTML = "";
-            let celebBaseIdx = 0;
-            for (let i = 1; i <= 100; i++) {
-                if (i === forcedCelebPosition) {
-                    celebHTML += `${i}. ${FORCE_CELEB}\n`;
-                } else {
-                    celebHTML += `${i}. ${baseCelebritiesList[celebBaseIdx]}\n`;
-                    celebBaseIdx++;
-                }
-            }
-            document.getElementById('celebView').innerText = celebHTML;
-
-            // Superheroes
-            let heroHTML = "";
-            let heroBaseIdx = 0;
-            for (let i = 1; i <= 15; i++) {
-                if (i === forcedHeroPosition) {
-                    heroHTML += `${i}. ${FORCE_HERO}\n`;
-                } else {
-                    heroHTML += `${i}. ${baseSuperheroesList[heroBaseIdx]}\n`;
-                    heroBaseIdx++;
-                }
-            }
-            document.getElementById('heroView').innerText = heroHTML;
-
-            // Animals
-            let animalHTML = "";
-            let animalBaseIdx = 0;
-            for (let i = 1; i <= 50; i++) {
-                if (i === forcedAnimalPosition) {
-                    animalHTML += `${i}. ${FORCE_ANIMAL}\n`;
-                } else {
-                    animalHTML += `${i}. ${baseAnimalsList[animalBaseIdx]}\n`;
-                    animalBaseIdx++;
-                }
-            }
-            document.getElementById('animalView').innerText = animalHTML;
+        function applyChoices() {
+            let f1 = document.getElementById('force1').value.trim();
+            let f2 = document.getElementById('force2').value.trim();
+            let f3 = document.getElementById('force3').value.trim();
+            let f4 = document.getElementById('force4').value.trim();
+            
+            // သိမ်းဆည်းခြင်း logic များ ဆက်လက်ထည့်သွင်းနိုင်ပါသည်
+            closePanel();
         }
-
-        // Apply Custom Spectator Choice Numbers
-        function applyMagicChoice() {
-            let celebVal = parseInt(document.getElementById('celebNum').value) || 0;
-            let heroVal = parseInt(document.getElementById('heroNum').value) || 0;
-            let animalVal = parseInt(document.getElementById('animalNum').value) || 0;
-
-            if (celebVal >= 1 && celebVal <= 100) forcedCelebPosition = celebVal;
-            if (heroVal >= 1 && heroVal <= 15) forcedHeroPosition = heroVal;
-            if (animalVal >= 1 && animalVal <= 50) forcedAnimalPosition = animalVal;
-
-            renderLists();
-            hidePanel();
-        }
-
-        // Independent Navigation Controls
-        function openNote(type) {
-            document.getElementById('folderView').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'inline';
-
-            document.getElementById('celebView').style.display = 'none';
-            document.getElementById('heroView').style.display = 'none';
-            document.getElementById('animalView').style.display = 'none';
-
-            if (type === 'celebrities') {
-                document.getElementById('mainTitle').innerText = "Celebrities";
-                document.getElementById('celebView').style.display = 'block';
-            } else if (type === 'superheroes') {
-                document.getElementById('mainTitle').innerText = "Superheroes";
-                document.getElementById('heroView').style.display = 'block';
-            } else if (type === 'animals') {
-                document.getElementById('mainTitle').innerText = "Animals";
-                document.getElementById('animalView').style.display = 'block';
-            }
-        }
-
-        function showFolderView() {
-            document.getElementById('folderView').style.display = 'block';
-            document.getElementById('celebView').style.display = 'none';
-            document.getElementById('heroView').style.display = 'none';
-            document.getElementById('animalView').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('mainTitle').innerText = "Notes";
-        }
-
-        // Initial Setup
-        renderLists();
     </script>
 </body>
-                </html>
+</html>
