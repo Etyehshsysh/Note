@@ -181,6 +181,15 @@
             background-color: #2d2d2d;
             color: #fff;
         }
+
+        #secretTrigger {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 999;
+        }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -220,29 +229,32 @@
         </div>
     </div>
 
+    <!-- Secret Trigger Area -->
+    <div id="secretTrigger" onclick="openPanel()"></div>
+
     <!-- Magician Control Panel Modal -->
     <div class="modal-overlay" id="controlPanel" onclick="event.stopPropagation()">
         <div class="modal-content">
             <div class="modal-title">Magician Control Panel</div>
             
             <div class="input-group">
-                <span class="input-label">Celebrity Target (Number 1-100):</span>
-                <input type="text" class="modal-input" id="force1" placeholder="e.g. 58">
+                <span class="input-label">Celebrity Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force1" placeholder="e.g. 23: Tom Cruise">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Superhero Target (Number 1-15):</span>
-                <input type="text" class="modal-input" id="force2" placeholder="e.g. 12">
+                <span class="input-label">Superhero Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force2" placeholder="e.g. 5: Batman">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Animal Target (Number 1-50):</span>
-                <input type="text" class="modal-input" id="force3" placeholder="e.g. 46">
+                <span class="input-label">Animal Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force3" placeholder="e.g. 12: Tiger">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Songs Target (Number 1-100):</span>
-                <input type="text" class="modal-input" id="force4" placeholder="e.g. 35">
+                <span class="input-label">Songs Target (Format: နံပါတ်:နာမည်):</span>
+                <input type="text" class="modal-input" id="force4" placeholder="e.g. 23: Someone Like You">
             </div>
 
             <div class="modal-buttons">
@@ -256,7 +268,7 @@
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
         document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
 
-        const celebrityNames = [
+        const baseCelebrityNames = [
             "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
             "Angelina Jolie", "Taylor Swift", "Justin Bieber", "Ariana Grande", "Selena Gomez", "Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "David Beckham", "Zendaya",
             "Tom Holland", "Billie Eilish", "Drake", "Rihanna", "Beyonce", "Lady Gaga", "Bruno Mars", "Ed Sheeran", "The Weeknd", "Post Malone",
@@ -269,12 +281,12 @@
             "Halle Berry", "Salma Hayek", "Penelope Cruz", "Cameron Diaz", "Drew Barrymore", "Charlize Theron", "Anne Hathaway", "Meryl Streep", "Cate Blanchett", "Florence Pugh"
         ];
 
-        const superheroNames = [
+        const baseSuperheroNames = [
             "Spider-Man", "Batman", "Superman", "Iron Man", "Wonder Woman", "Captain America", "Thor", "The Flash", "Hulk", "Black Panther",
             "Deadpool", "Doctor Strange", "Wolverine", "Aquaman", "Green Lantern"
         ];
 
-        const animalNames = [
+        const baseAnimalNames = [
             "Lion", "Tiger", "Elephant", "Giraffe", "Zebra", "Cheetah", "Leopard", "Kangaroo", "Panda", "Koala",
             "Wolf", "Fox", "Bear", "Gorilla", "Chimpanzee", "Rhinoceros", "Hippopotamus", "Crocodile", "Alligator", "Snake",
             "Eagle", "Owl", "Hawk", "Penguin", "Dolphin", "Whale", "Shark", "Octopus", "Turtle", "Rabbit",
@@ -282,7 +294,7 @@
             "Raccoon", "Beaver", "Otter", "Seal", "Walrus", "Flamingo", "Peacock", "Parrot", "Swan", "Ostrich"
         ];
 
-        const songNames = [
+        const baseSongNames = [
             "Blinding Lights", "Shape of You", "Dance Monkey", "Someone Like You", "Rolling in the Deep", "Bad Guy", "Watermelon Sugar", "Levitating", "Stay", "Peaches",
             "As It Was", "Heat Waves", "Flowers", "Anti-Hero", "Kill Bill", "Levitating", "Dynamite", "Butter", "Permission to Dance", "Boy With Luv",
             "Old Town Road", "Circles", "Sunflower", "Rockstar", "Congratulations", "God's Plan", "One Dance", "Havana", "Senorita", "Closer",
@@ -295,11 +307,12 @@
             "Starboy", "Can't Feel My Face", "The Hills", "I Feel It Coming", "Save Your Tears", "Die For You", "One of the Girls", "Starships", "Super Bass", "Anaconda"
         ];
 
-        let forceSettings = {
-            Celebrities: "",
-            Superheroes: "",
-            Animals: "",
-            Songs: ""
+        // သိမ်းဆည်းရန် Config
+        let forceConfig = {
+            Celebrities: { num: 0, name: "" },
+            Superheroes: { num: 0, name: "" },
+            Animals: { num: 0, name: "" },
+            Songs: { num: 0, name: "" }
         };
 
         function openList(category) {
@@ -310,35 +323,37 @@
             let container = document.getElementById('itemListContainer');
             container.innerHTML = "";
 
-            let dataList = [];
+            let originalList = [];
             let total = 0;
 
-            if (category === 'Celebrities') { dataList = celebrityNames; total = 100; }
-            else if (category === 'Superheroes') { dataList = superheroNames; total = 15; }
-            else if (category === 'Animals') { dataList = animalNames; total = 50; }
-            else if (category === 'Songs') { dataList = songNames; total = 100; }
+            if (category === 'Celebrities') { originalList = [...baseCelebrityNames]; total = 100; }
+            else if (category === 'Superheroes') { originalList = [...baseSuperheroNames]; total = 15; }
+            else if (category === 'Animals') { originalList = [...baseAnimalNames]; total = 50; }
+            else if (category === 'Songs') { originalList = [...baseSongNames]; total = 100; }
 
-            let forcedVal = parseInt(forceSettings[category]);
+            // မူလစာရင်းကို Copy ကူးမည်
+            let activeList = [...originalList];
 
-            let itemsArray = [];
-            for (let i = 1; i <= total; i++) {
-                itemsArray.push({ name: dataList[i-1] || (category + " Item " + i) });
-            }
-
-            // အကယ်၍ Force လုပ်ထားပါက ထိုနာမည်ကို ထိပ်ဆုံးသို့ တင်မည်
-            if (!isNaN(forcedVal) && forcedVal >= 1 && forcedVal <= total) {
-                let targetIndex = forcedVal - 1;
-                if (targetIndex >= 0 && targetIndex < itemsArray.length) {
-                    let forcedItem = itemsArray.splice(targetIndex, 1)[0];
-                    itemsArray.unshift(forcedItem);
+            // Force လုပ်ထားသော configuration ကိုစစ်ဆေးမည်
+            let config = forceConfig[category];
+            if (config.num >= 1 && config.num <= total && config.name !== "") {
+                let targetIndex = config.num - 1;
+                // အကယ်၍ အဲ့ဒီနာမည်က စာရင်းထဲမှာ အခြားနေရာမှာ ရှိနေရင် အရင်ဖယ်ထုတ်မည် (ထပ်နေတာတွေ မဖြစ်အောင်)
+                let existingIdx = activeList.indexOf(config.name);
+                if (existingIdx !== -1) {
+                    activeList.splice(existingIdx, 1);
+                } else {
+                    activeList.pop(); // အရွယ်အစား တူနေစေရန် ဖယ်မည်
                 }
+                // သတ်မှတ်ထားသော နံပါတ်နေရာ (Target Index) မှာ အတိအကျ ထည့်မည်
+                activeList.splice(targetIndex, 0, config.name);
             }
 
-            // အစအဆုံး နံပါတ်စဉ် 1 ကနေ သန့်သန့်ရှင်းရှင်း ပြသမည် (ညာဘက်အခြမ်းမှာ ဘာမှမပါတော့ပါ)
-            itemsArray.forEach((item, index) => {
+            // စာရင်းကို 1 ကနေ စပြီး အစဉ်လိုက် ပြသမည်
+            activeList.forEach((itemName, index) => {
                 let row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = `<span>${index + 1}. ${item.name}</span>`;
+                row.innerHTML = `<span>${index + 1}. ${itemName}</span>`;
                 container.appendChild(row);
             });
         }
@@ -365,6 +380,12 @@
         }
 
         function openPanel() {
+            // ဖွင့်တဲ့အချိန်မှာ လက်ရှိထည့်ထားတာတွေကို Input ထဲမှာ ပြန်ပြပေးမည်
+            document.getElementById('force1').value = forceConfig.Celebrities.num ? `${forceConfig.Celebrities.num}: ${forceConfig.Celebrities.name}` : "";
+            document.getElementById('force2').value = forceConfig.Superheroes.num ? `${forceConfig.Superheroes.num}: ${forceConfig.Superheroes.name}` : "";
+            document.getElementById('force3').value = forceConfig.Animals.num ? `${forceConfig.Animals.num}: ${forceConfig.Animals.name}` : "";
+            document.getElementById('force4').value = forceConfig.Songs.num ? `${forceConfig.Songs.num}: ${forceConfig.Songs.name}` : "";
+            
             document.getElementById('controlPanel').style.display = 'flex';
         }
 
@@ -372,14 +393,29 @@
             document.getElementById('controlPanel').style.display = 'none';
         }
 
+        function parseInput(inputStr, totalMax) {
+            if (!inputStr.includes(':')) return { num: 0, name: "" };
+            let parts = inputStr.split(':');
+            let num = parseInt(parts[0].trim());
+            let name = parts[1].trim();
+            if (isNaN(num) || num < 1 || num > totalMax || name === "") return { num: 0, name: "" };
+            return { num: num, name: name };
+        }
+
         function applyChoices() {
-            forceSettings.Celebrities = document.getElementById('force1').value.trim();
-            forceSettings.Superheroes = document.getElementById('force2').value.trim();
-            forceSettings.Animals = document.getElementById('force3').value.trim();
-            forceSettings.Songs = document.getElementById('force4').value.trim();
+            let val1 = document.getElementById('force1').value.trim();
+            let val2 = document.getElementById('force2').value.trim();
+            let val3 = document.getElementById('force3').value.trim();
+            let val4 = document.getElementById('force4').value.trim();
+
+            forceConfig.Celebrities = parseInput(val1, 100);
+            forceConfig.Superheroes = parseInput(val2, 15);
+            forceConfig.Animals = parseInput(val3, 50);
+            forceConfig.Songs = parseInput(val4, 100);
+
             closePanel();
         }
     </script>
 </body>
-                </html>
-                                            
+    </html>
+    
