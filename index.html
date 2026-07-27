@@ -54,11 +54,44 @@
             font-weight: 500;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.2s;
+        }
+
+        .list-card:active {
+            background-color: #2c2c2c;
         }
 
         .list-card span:last-child {
             color: #8c8c8c;
             font-size: 15px;
+        }
+
+        /* Detail View (စာရင်းထဲဝင်လိုက်လျှင် ပေါ်မည့်နေရာ) */
+        .detail-view {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #ffb74d;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            margin-bottom: 10px;
+        }
+
+        .item-row {
+            background-color: #1e1e1e;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
         }
 
         /* Magician Control Panel Modal */
@@ -162,27 +195,37 @@
 <body>
 
     <div class="container">
-        <div class="header-title">Notes</div>
-        <div class="date-sub" id="currentDateText"></div>
+        <!-- Main List Screen -->
+        <div id="mainScreen">
+            <div class="header-title">Notes</div>
+            <div class="date-sub" id="currentDateText"></div>
 
-        <div class="list-card" onclick="alert('Famous Celebrities (1-100)')">
-            <span>Famous Celebrities</span>
-            <span>100 ›</span>
+            <div class="list-card" onclick="openList('Celebrities', 100)">
+                <span>Famous Celebrities</span>
+                <span>100 ›</span>
+            </div>
+
+            <div class="list-card" onclick="openList('Superheroes', 15)">
+                <span>Superheroes List</span>
+                <span>15 ›</span>
+            </div>
+
+            <div class="list-card" onclick="openList('Animals', 50)">
+                <span>Animals List</span>
+                <span>50 ›</span>
+            </div>
+
+            <div class="list-card" onclick="openList('Songs', 100)">
+                <span>Songs List</span>
+                <span>100 ›</span>
+            </div>
         </div>
 
-        <div class="list-card" onclick="alert('Superheroes List (1-15)')">
-            <span>Superheroes List</span>
-            <span>15 ›</span>
-        </div>
-
-        <div class="list-card" onclick="alert('Animals List (1-50)')">
-            <span>Animals List</span>
-            <span>50 ›</span>
-        </div>
-
-        <div class="list-card" onclick="alert('Songs List (1-100)')">
-            <span>Songs List</span>
-            <span>100 ›</span>
+        <!-- Detail Screen (စာရင်းထဲ ဝင်လိုက်သည့်အခါ ပြမည့်နေရာ) -->
+        <div id="detailScreen" class="detail-view">
+            <button class="back-btn" onclick="goBack()">‹ Back</button>
+            <div class="header-title" id="detailTitle" style="font-size: 24px;">Title</div>
+            <div id="itemListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -196,22 +239,22 @@
             
             <div class="input-group">
                 <span class="input-label">Celebrity Target Number (1-100):</span>
-                <input type="text" class="modal-input" id="force1" placeholder="Force Tom Cruise at e.g. 58">
+                <input type="text" class="modal-input" id="force1" placeholder="e.g. 58">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Superhero Target Number (1-15):</span>
-                <input type="text" class="modal-input" id="force2" placeholder="Force Spider-Man at e.g. 12">
+                <input type="text" class="modal-input" id="force2" placeholder="e.g. 12">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Animal Target Number (1-50):</span>
-                <input type="text" class="modal-input" id="force3" placeholder="Force Bear at e.g. 46">
+                <input type="text" class="modal-input" id="force3" placeholder="e.g. 46">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Songs Target Number (1-100):</span>
-                <input type="text" class="modal-input" id="force4" placeholder="Force Song at e.g. 35">
+                <input type="text" class="modal-input" id="force4" placeholder="e.g. 35">
             </div>
 
             <div class="modal-buttons">
@@ -222,9 +265,56 @@
     </div>
 
     <script>
-        // လက်ရှိနေ့စွဲကို အလိုအလျောက်ဖော်ပြရန်
+        // လက်ရှိနေ့စွဲကို ဖော်ပြရန်
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
         document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
+
+        let forceSettings = {
+            Celebrities: "",
+            Superheroes: "",
+            Animals: "",
+            Songs: ""
+        };
+
+        let currentCategory = "";
+        let maxCount = 0;
+
+        function openList(category, totalCount) {
+            currentCategory = category;
+            maxCount = totalCount;
+            
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('detailScreen').style.display = 'flex';
+            document.getElementById('detailTitle').innerText = category + " List";
+
+            let container = document.getElementById('itemListContainer');
+            container.innerHTML = "";
+
+            // Force လုပ်ထားသော နံပါတ်ရှိမရှိ စစ်ဆေးမည်
+            let forcedTarget = parseInt(forceSettings[category]);
+
+            for (let i = 1; i <= totalCount; i++) {
+                let row = document.createElement('div');
+                row.className = 'item-row';
+                
+                let displayText = i + ". " + category + " Item " + i;
+                
+                // အကယ်၍ Magician Panel ထဲတွင် Force ထည့်ထားပါက ထိုနံပါတ်ကို ပထမဆုံး (သို့မဟုတ်) ရွေးချယ်ထားသည့်နေရာတွင် ပေါ်လာစေမည်
+                if (!isNaN(forcedTarget) && forcedTarget === i) {
+                    displayText = i + ". ★ Forced Target (" + category + " " + i + ")";
+                    row.style.background = "#2c2416";
+                    row.style.border = "1px solid #ffb74d";
+                }
+
+                row.innerHTML = `<span>${displayText}</span><span>#${i}</span>`;
+                container.appendChild(row);
+            }
+        }
+
+        function goBack() {
+            document.getElementById('detailScreen').style.display = 'none';
+            document.getElementById('mainScreen').style.display = 'flex';
+        }
 
         // Secret Double Tap Logic (ညာဘက်အောက်ထောင့်ကို 2 ချက်နှိပ်ရန်)
         let tapCount = 0;
@@ -246,12 +336,11 @@
         }
 
         function applyChoices() {
-            let f1 = document.getElementById('force1').value.trim();
-            let f2 = document.getElementById('force2').value.trim();
-            let f3 = document.getElementById('force3').value.trim();
-            let f4 = document.getElementById('force4').value.trim();
+            forceSettings.Celebrities = document.getElementById('force1').value.trim();
+            forceSettings.Superheroes = document.getElementById('force2').value.trim();
+            forceSettings.Animals = document.getElementById('force3').value.trim();
+            forceSettings.Songs = document.getElementById('force4').value.trim();
             
-            // ထည့်သွင်းထားသော တန်ဖိုးများကို သိမ်းဆည်းရန်
             closePanel();
         }
     </script>
