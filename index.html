@@ -237,22 +237,22 @@
             
             <div class="input-group">
                 <span class="input-label">Celebrity Target Number (1-100):</span>
-                <input type="number" class="modal-input" id="force1" placeholder="Force Tom Cruise at e.g. 58">
+                <input type="number" class="modal-input" id="force1" placeholder="Default at 50">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Superhero Target Number (1-15):</span>
-                <input type="number" class="modal-input" id="force2" placeholder="Force Spider-Man at e.g. 12">
+                <input type="number" class="modal-input" id="force2" placeholder="Default at 8">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Animal Target Number (1-50):</span>
-                <input type="number" class="modal-input" id="force3" placeholder="Force Tiger at e.g. 46">
+                <input type="number" class="modal-input" id="force3" placeholder="Default at 25">
             </div>
 
             <div class="input-group">
                 <span class="input-label">Songs Target Number (1-100):</span>
-                <input type="number" class="modal-input" id="force4" placeholder="Force Someone Like You at e.g. 23">
+                <input type="number" class="modal-input" id="force4" placeholder="Default at 50">
             </div>
 
             <div class="modal-buttons">
@@ -267,7 +267,7 @@
         document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
 
         const baseCelebrityNames = [
-            "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
+            "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
             "Angelina Jolie", "Taylor Swift", "Justin Bieber", "Ariana Grande", "Selena Gomez", "Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "David Beckham", "Zendaya",
             "Tom Holland", "Billie Eilish", "Drake", "Rihanna", "Beyonce", "Lady Gaga", "Bruno Mars", "Ed Sheeran", "The Weeknd", "Post Malone",
             "Eminem", "Snoop Dogg", "Cardi B", "Nicki Minaj", "Kanye West", "Kim Kardashian", "Kylie Jenner", "Kendall Jenner", "Gigi Hadid", "Bella Hadid",
@@ -280,7 +280,7 @@
         ];
 
         const baseSuperheroNames = [
-            "Spider-Man", "Batman", "Superman", "Iron Man", "Wonder Woman", "Captain America", "Thor", "The Flash", "Hulk", "Black Panther",
+            "Batman", "Superman", "Iron Man", "Wonder Woman", "Captain America", "Thor", "The Flash", "Hulk", "Black Panther",
             "Deadpool", "Doctor Strange", "Wolverine", "Aquaman", "Green Lantern"
         ];
 
@@ -288,28 +288,28 @@
             "Lion", "Tiger", "Elephant", "Giraffe", "Zebra", "Cheetah", "Leopard", "Kangaroo", "Panda", "Koala",
             "Wolf", "Fox", "Bear", "Gorilla", "Chimpanzee", "Rhinoceros", "Hippopotamus", "Crocodile", "Alligator", "Snake",
             "Eagle", "Owl", "Hawk", "Penguin", "Dolphin", "Whale", "Shark", "Octopus", "Turtle", "Rabbit",
-            "Deer", "Horse", "Donkey", "Camel", "Buffalo", "Bison", "Owl", "Bat", "Hedgehog", "Squirrel",
+            "Deer", "Horse", "Donkey", "Camel", "Buffalo", "Bison", "Bat", "Hedgehog", "Squirrel",
             "Raccoon", "Beaver", "Otter", "Seal", "Walrus", "Flamingo", "Peacock", "Parrot", "Swan", "Ostrich"
         ];
 
         const baseSongNames = [
-            "Blinding Lights", "Shape of You", "Dance Monkey", "Someone Like You", "Rolling in the Deep", "Bad Guy", "Watermelon Sugar", "Levitating", "Stay", "Peaches",
-            "As It Was", "Heat Waves", "Flowers", "Anti-Hero", "Kill Bill", "Levitating", "Dynamite", "Butter", "Permission to Dance", "Boy With Luv",
+            "Blinding Lights", "Shape of You", "Dance Monkey", "Rolling in the Deep", "Bad Guy", "Watermelon Sugar", "Levitating", "Stay", "Peaches",
+            "As It Was", "Heat Waves", "Flowers", "Anti-Hero", "Kill Bill", "Dynamite", "Butter", "Permission to Dance", "Boy With Luv",
             "Old Town Road", "Circles", "Sunflower", "Rockstar", "Congratulations", "God's Plan", "One Dance", "Havana", "Senorita", "Closer",
-            "Despacito", "Lean On", "Sugar", "Thinking Out Loud", "Photograph", "Perfect", "Halo", "Single Ladies", "Rolling in the Deep", "Set Fire to the Rain",
-            "Counting Stars", "Radioactive", "Demons", "Believer", "Thunder", "Enemy", "Enemy", "Enemy", "Enemy", "Enemy",
-            "Mockingbird", "Lose Yourself", "Without Me", "Not Afraid", "Love Yourself", "Sorry", "Baby", "Yummy", "Ghost", "Holy",
-            "Senorita", "Treat You Better", "In My Blood", "Stitches", "Attention", "How Long", "We Don't Talk Anymore", "Dangerously", "The Way I Am", "Done For Me",
-            "Payphone", "Moves Like Jagger", "Sugar", "Animals", "Maps", "One More Night", "This Love", "She Will Be Loved", "Memories", "Girls Like You",
+            "Despacito", "Lean On", "Sugar", "Thinking Out Loud", "Photograph", "Perfect", "Halo", "Single Ladies", "Set Fire to the Rain",
+            "Counting Stars", "Radioactive", "Demons", "Believer", "Thunder", "Enemy", "Mockingbird", "Lose Yourself", "Without Me", "Not Afraid", "Love Yourself", "Sorry", "Baby", "Yummy", "Ghost", "Holy",
+            "Treat You Better", "In My Blood", "Stitches", "Attention", "How Long", "We Don't Talk Anymore", "Dangerously", "The Way I Am", "Done For Me",
+            "Payphone", "Moves Like Jagger", "Animals", "Maps", "One More Night", "This Love", "She Will Be Loved", "Memories", "Girls Like You",
             "Drivers License", "Good 4 U", "Traitor", "Deja Vu", "Vampire", "Bad Idea Right?", "Happier Than Ever", "Ocean Eyes", "When the Party's Over", "Lovely",
             "Starboy", "Can't Feel My Face", "The Hills", "I Feel It Coming", "Save Your Tears", "Die For You", "One of the Girls", "Starships", "Super Bass", "Anaconda"
         ];
 
+        // Default အနေဖြင့် အလယ်ကျော်ကျော် နေရာများတွင် ပုံသေထားရှိခြင်း (Control Panel မဖွင့်ရသေးရင်တောင် ဤအတိုင်းဖြစ်မည်)
         let forceConfig = {
-            Celebrities: 0,
-            Superheroes: 0,
-            Animals: 0,
-            Songs: 0
+            Celebrities: 50,  // Tom Cruise ကို ၅၀ နေရာမှာ ထားမည်
+            Superheroes: 8,   // Spider-Man ကို ၈ နေရာမှာ ထားမည်
+            Animals: 25,      // Tiger ကို ၂၅ နေရာမှာ ထားမည်
+            Songs: 50         // Someone Like You ကို ၅၀ နေရာမှာ ထားမည်
         };
 
         const targetItems = {
@@ -380,10 +380,10 @@
         }
 
         function openPanel() {
-            document.getElementById('force1').value = forceConfig.Celebrities || "";
-            document.getElementById('force2').value = forceConfig.Superheroes || "";
-            document.getElementById('force3').value = forceConfig.Animals || "";
-            document.getElementById('force4').value = forceConfig.Songs || "";
+            document.getElementById('force1').value = forceConfig.Celebrities;
+            document.getElementById('force2').value = forceConfig.Superheroes;
+            document.getElementById('force3').value = forceConfig.Animals;
+            document.getElementById('force4').value = forceConfig.Songs;
             
             document.getElementById('controlPanel').style.display = 'flex';
         }
@@ -398,14 +398,14 @@
             let val3 = parseInt(document.getElementById('force3').value);
             let val4 = parseInt(document.getElementById('force4').value);
 
-            forceConfig.Celebrities = (isNaN(val1) || val1 < 1 || val1 > 100) ? 0 : val1;
-            forceConfig.Superheroes = (isNaN(val2) || val2 < 1 || val2 > 15) ? 0 : val2;
-            forceConfig.Animals = (isNaN(val3) || val3 < 1 || val3 > 50) ? 0 : val3;
-            forceConfig.Songs = (isNaN(val4) || val4 < 1 || val4 > 100) ? 0 : val4;
+            forceConfig.Celebrities = (isNaN(val1) || val1 < 1 || val1 > 100) ? 50 : val1;
+            forceConfig.Superheroes = (isNaN(val2) || val2 < 1 || val2 > 15) ? 8 : val2;
+            forceConfig.Animals = (isNaN(val3) || val3 < 1 || val3 > 50) ? 25 : val3;
+            forceConfig.Songs = (isNaN(val4) || val4 < 1 || val4 > 100) ? 50 : val4;
 
             closePanel();
         }
     </script>
 </body>
-    </html>
+                </html>
     
