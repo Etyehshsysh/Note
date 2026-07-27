@@ -66,7 +66,7 @@
             font-size: 15px;
         }
 
-        /* Detail View (စာရင်းထဲဝင်လိုက်လျှင် ပေါ်မည့်နေရာ) */
+        /* Detail View */
         .detail-view {
             display: none;
             flex-direction: column;
@@ -87,11 +87,12 @@
 
         .item-row {
             background-color: #1e1e1e;
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-radius: 10px;
             font-size: 15px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         /* Magician Control Panel Modal */
@@ -102,7 +103,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -181,18 +182,18 @@
             color: #fff;
         }
 
-        /* Secret Touch Trigger (ညာဘက်အောက်ထောင့်) */
+        /* Secret Trigger Area (ညာဘက်အောက်ထောင့် ဧရိယာအကျယ်ကြီး) */
         #secretTrigger {
             position: fixed;
             bottom: 0;
             right: 0;
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             z-index: 999;
         }
     </style>
 </head>
-<body>
+<body onclick="handleGlobalClick(event)">
 
     <div class="container">
         <!-- Main List Screen -->
@@ -200,28 +201,28 @@
             <div class="header-title">Notes</div>
             <div class="date-sub" id="currentDateText"></div>
 
-            <div class="list-card" onclick="openList('Celebrities', 100)">
+            <div class="list-card" onclick="openList('Celebrities')">
                 <span>Famous Celebrities</span>
                 <span>100 ›</span>
             </div>
 
-            <div class="list-card" onclick="openList('Superheroes', 15)">
+            <div class="list-card" onclick="openList('Superheroes')">
                 <span>Superheroes List</span>
                 <span>15 ›</span>
             </div>
 
-            <div class="list-card" onclick="openList('Animals', 50)">
+            <div class="list-card" onclick="openList('Animals')">
                 <span>Animals List</span>
                 <span>50 ›</span>
             </div>
 
-            <div class="list-card" onclick="openList('Songs', 100)">
+            <div class="list-card" onclick="openList('Songs')">
                 <span>Songs List</span>
                 <span>100 ›</span>
             </div>
         </div>
 
-        <!-- Detail Screen (စာရင်းထဲ ဝင်လိုက်သည့်အခါ ပြမည့်နေရာ) -->
+        <!-- Detail Screen -->
         <div id="detailScreen" class="detail-view">
             <button class="back-btn" onclick="goBack()">‹ Back</button>
             <div class="header-title" id="detailTitle" style="font-size: 24px;">Title</div>
@@ -229,31 +230,31 @@
         </div>
     </div>
 
-    <!-- Secret Touch Area to open Panel -->
-    <div id="secretTrigger" onclick="handleSecretTap()"></div>
+    <!-- Secret Trigger Area -->
+    <div id="secretTrigger" onclick="openPanel()"></div>
 
     <!-- Magician Control Panel Modal -->
-    <div class="modal-overlay" id="controlPanel">
+    <div class="modal-overlay" id="controlPanel" onclick="event.stopPropagation()">
         <div class="modal-content">
             <div class="modal-title">Magician Control Panel</div>
             
             <div class="input-group">
-                <span class="input-label">Celebrity Target Number (1-100):</span>
+                <span class="input-label">Celebrity Target (Number 1-100):</span>
                 <input type="text" class="modal-input" id="force1" placeholder="e.g. 58">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Superhero Target Number (1-15):</span>
+                <span class="input-label">Superhero Target (Number 1-15):</span>
                 <input type="text" class="modal-input" id="force2" placeholder="e.g. 12">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Animal Target Number (1-50):</span>
+                <span class="input-label">Animal Target (Number 1-50):</span>
                 <input type="text" class="modal-input" id="force3" placeholder="e.g. 46">
             </div>
 
             <div class="input-group">
-                <span class="input-label">Songs Target Number (1-100):</span>
+                <span class="input-label">Songs Target (Number 1-100):</span>
                 <input type="text" class="modal-input" id="force4" placeholder="e.g. 35">
             </div>
 
@@ -265,9 +266,49 @@
     </div>
 
     <script>
-        // လက်ရှိနေ့စွဲကို ဖော်ပြရန်
+        // နေ့စွဲပြရန်
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
         document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('en-US', options);
+
+        // စာရင်းဒေတာများ (Celebrities 100, Superheroes 15, Animals 50, Songs 100)
+        const celebrityNames = [
+            "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Keanu Reeves", "Chris Hemsworth", "Scarlett Johansson",
+            "Angelina Jolie", "Taylor Swift", "Justin Bieber", "Ariana Grande", "Selena Gomez", "Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "David Beckham", "Zendaya",
+            "Tom Holland", "Billie Eilish", "Drake", "Rihanna", "Beyonce", "Lady Gaga", "Bruno Mars", "Ed Sheeran", "The Weeknd", "Post Malone",
+            "Eminem", "Snoop Dogg", "Cardi B", "Nicki Minaj", "Kanye West", "Kim Kardashian", "Kylie Jenner", "Kendall Jenner", "Gigi Hadid", "Bella Hadid",
+            "Emma Watson", "Daniel Radcliffe", "Rupert Grint", "Robert Pattinson", "Jennifer Lawrence", "Margot Robbie", "Ryan Reynolds", "Hugh Jackman", "Chris Evans", "Mark Ruffalo",
+            "Tom Hiddleston", "Benedict Cumberbatch", "Henry Cavill", "Ben Affleck", "Gal Gadot", "Jason Momoa", "Ezra Miller", "Anne Hathaway", "Natalie Portman", "Mila Kunis",
+            "Megan Fox", "Zac Efron", "Channing Tatum", "Vin Diesel", "Paul Walker", "Jason Statham", "Sylvester Stallone", "Arnold Schwarzenegger", "Jackie Chan", "Jet Li",
+            "Bruce Lee", "Rowan Atkinson", "Jim Carrey", "Adam Sandler", "Will Ferrell", "Kevin Hart", "Dwayne Johnson", "Jackie Chan", "Tom Hanks", "Morgan Freeman",
+            "Brad Pitt", "Johnny Depp", "Leonardo DiCaprio", "Matt Damon", "Ben Affleck", "George Clooney", "Julia Roberts", "Sandra Bullock", "Nicole Kidman", "Reese Witherspoon",
+            "Halle Berry", "Salma Hayek", "Penelope Cruz", "Cameron Diaz", "Drew Barrymore", "Charlize Theron", "Anne Hathaway", "Meryl Streep", "Cate Blanchett", "Florence Pugh"
+        ];
+
+        const superheroNames = [
+            "Spider-Man", "Batman", "Superman", "Iron Man", "Wonder Woman", "Captain America", "Thor", "The Flash", "Hulk", "Black Panther",
+            "Deadpool", "Doctor Strange", "Wolverine", "Aquaman", "Green Lantern"
+        ];
+
+        const animalNames = [
+            "Lion", "Tiger", "Elephant", "Giraffe", "Zebra", "Cheetah", "Leopard", "Kangaroo", "Panda", "Koala",
+            "Wolf", "Fox", "Bear", "Gorilla", "Chimpanzee", "Rhinoceros", "Hippopotamus", "Crocodile", "Alligator", "Snake",
+            "Eagle", "Owl", "Hawk", "Penguin", "Dolphin", "Whale", "Shark", "Octopus", "Turtle", "Rabbit",
+            "Deer", "Horse", "Donkey", "Camel", "Buffalo", "Bison", "Owl", "Bat", "Hedgehog", "Squirrel",
+            "Raccoon", "Beaver", "Otter", "Seal", "Walrus", "Flamingo", "Peacock", "Parrot", "Swan", "Ostrich"
+        ];
+
+        const songNames = [
+            "Blinding Lights", "Shape of You", "Dance Monkey", "Someone Like You", "Rolling in the Deep", "Bad Guy", "Watermelon Sugar", "Levitating", "Stay", "Peaches",
+            "As It Was", "Heat Waves", "Flowers", "Anti-Hero", "Kill Bill", "Levitating", "Dynamite", "Butter", "Permission to Dance", "Boy With Luv",
+            "Old Town Road", "Circles", "Sunflower", "Rockstar", "Congratulations", "God's Plan", "One Dance", "Havana", "Senorita", "Closer",
+            "Despacito", "Lean On", "Sugar", "Thinking Out Loud", "Photograph", "Perfect", "Halo", "Single Ladies", "Rolling in the Deep", "Set Fire to the Rain",
+            "Counting Stars", "Radioactive", "Demons", "Believer", "Thunder", "Enemy", "Enemy", "Enemy", "Enemy", "Enemy",
+            "Mockingbird", "Lose Yourself", "Without Me", "Not Afraid", "Love Yourself", "Sorry", "Baby", "Yummy", "Ghost", "Holy",
+            "Senorita", "Treat You Better", "In My Blood", "Stitches", "Attention", "How Long", "We Don't Talk Anymore", "Dangerously", "The Way I Am", "Done For Me",
+            "Payphone", "Moves Like Jagger", "Sugar", "Animals", "Maps", "One More Night", "This Love", "She Will Be Loved", "Memories", "Girls Like You",
+            "Drivers License", "Good 4 U", "Traitor", "Deja Vu", "Vampire", "Bad Idea Right?", "Happier Than Ever", "Ocean Eyes", "When the Party's Over", "Lovely",
+            "Starboy", "Can't Feel My Face", "The Hills", "I Feel It Coming", "Save Your Tears", "Die For You", "One of the Girls", "Starships", "Super Bass", "Anaconda"
+        ];
 
         let forceSettings = {
             Celebrities: "",
@@ -276,13 +317,7 @@
             Songs: ""
         };
 
-        let currentCategory = "";
-        let maxCount = 0;
-
-        function openList(category, totalCount) {
-            currentCategory = category;
-            maxCount = totalCount;
-            
+        function openList(category) {
             document.getElementById('mainScreen').style.display = 'none';
             document.getElementById('detailScreen').style.display = 'flex';
             document.getElementById('detailTitle').innerText = category + " List";
@@ -290,25 +325,37 @@
             let container = document.getElementById('itemListContainer');
             container.innerHTML = "";
 
-            // Force လုပ်ထားသော နံပါတ်ရှိမရှိ စစ်ဆေးမည်
-            let forcedTarget = parseInt(forceSettings[category]);
+            let dataList = [];
+            let total = 0;
 
-            for (let i = 1; i <= totalCount; i++) {
+            if (category === 'Celebrities') { dataList = celebrityNames; total = 100; }
+            else if (category === 'Superheroes') { dataList = superheroNames; total = 15; }
+            else if (category === 'Animals') { dataList = animalNames; total = 50; }
+            else if (category === 'Songs') { dataList = songNames; total = 100; }
+
+            let forcedVal = parseInt(forceSettings[category]);
+
+            // အကယ်၍ Force လုပ်ထားပါက ထိုနံပါတ်ကို ပထမဆုံး အနေအထားသို့ ရောက်စေရန် စီစဉ်မည်
+            let itemsArray = [];
+            for (let i = 1; i <= total; i++) {
+                itemsArray.push({ index: i, name: dataList[i-1] || (category + " Item " + i) });
+            }
+
+            if (!isNaN(forcedVal) && forcedVal >= 1 && forcedVal <= total) {
+                let targetIndex = itemsArray.findIndex(item => item.index === forcedVal);
+                if (targetIndex > -1) {
+                    let removed = itemsArray.splice(targetIndex, 1)[0];
+                    itemsArray.unshift(removed); // Force လုပ်ထားသည်ကို ထိပ်ဆုံးသို့ တင်မည်
+                }
+            }
+
+            // စာရင်းများကို ဖန်တီးပြသမည်
+            itemsArray.forEach(item => {
                 let row = document.createElement('div');
                 row.className = 'item-row';
-                
-                let displayText = i + ". " + category + " Item " + i;
-                
-                // အကယ်၍ Magician Panel ထဲတွင် Force ထည့်ထားပါက ထိုနံပါတ်ကို ပထမဆုံး (သို့မဟုတ်) ရွေးချယ်ထားသည့်နေရာတွင် ပေါ်လာစေမည်
-                if (!isNaN(forcedTarget) && forcedTarget === i) {
-                    displayText = i + ". ★ Forced Target (" + category + " " + i + ")";
-                    row.style.background = "#2c2416";
-                    row.style.border = "1px solid #ffb74d";
-                }
-
-                row.innerHTML = `<span>${displayText}</span><span>#${i}</span>`;
+                row.innerHTML = `<span>${item.index}. ${item.name}</span><span style="color:#8c8c8c;">#${item.index}</span>`;
                 container.appendChild(row);
-            }
+            });
         }
 
         function goBack() {
@@ -316,19 +363,26 @@
             document.getElementById('mainScreen').style.display = 'flex';
         }
 
-        // Secret Double Tap Logic (ညာဘက်အောက်ထောင့်ကို 2 ချက်နှိပ်ရန်)
+        // Control Panel ဖွင့်ရန် (ညာဘက်အောက်ထောင့်နှိပ်၍သော်လည်းကောင်း၊ မျက်နှာပြင်ကို ၃ ချက်ဆက်တိုက်နှိပ်၍သော်လည်းကောင်း)
         let tapCount = 0;
         let tapTimer = null;
 
-        function handleSecretTap() {
+        function handleGlobalClick(e) {
+            // မော်ဒယ်လ်ဖွင့်ထားချိန် မပိတ်စေရန်
+            if(document.getElementById('controlPanel').style.display === 'flex') return;
+
             tapCount++;
             if (tapCount === 1) {
-                tapTimer = setTimeout(() => { tapCount = 0; }, 400);
-            } else if (tapCount === 2) {
+                tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+            } else if (tapCount === 3) {
                 clearTimeout(tapTimer);
                 tapCount = 0;
-                document.getElementById('controlPanel').style.display = 'flex';
+                openPanel();
             }
+        }
+
+        function openPanel() {
+            document.getElementById('controlPanel').style.display = 'flex';
         }
 
         function closePanel() {
@@ -340,7 +394,6 @@
             forceSettings.Superheroes = document.getElementById('force2').value.trim();
             forceSettings.Animals = document.getElementById('force3').value.trim();
             forceSettings.Songs = document.getElementById('force4').value.trim();
-            
             closePanel();
         }
     </script>
