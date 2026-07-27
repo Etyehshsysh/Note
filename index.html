@@ -335,14 +335,17 @@
             let activeList = [...originalList];
             let config = forceConfig[category];
 
+            // အစ်ကို Control Panel ထဲမှာ သတ်မှတ်ထားတဲ့ နံပါတ်နှင့် နာမည်ကို အဲ့ဒီနေရာမှာ တိတိကျကျ ပုံသေဖြစ်စေရန်
             if (config.num >= 1 && config.num <= total && config.name !== "") {
                 let targetIndex = config.num - 1;
+                // အကယ်၍ အဲ့ဒီနာမည်က စာရင်းထဲမှာ အခြားနေရာမှာ ရှိနေရင် အရင်ဖယ်ထုတ်မည်
                 let existingIdx = activeList.indexOf(config.name);
                 if (existingIdx !== -1) {
                     activeList.splice(existingIdx, 1);
                 } else {
                     activeList.pop();
                 }
+                // သတ်မှတ်ထားသော နံပါတ်နေရာမှာ အတိအကျ ပုံသေထည့်မည်
                 activeList.splice(targetIndex, 0, config.name);
             }
 
@@ -413,4 +416,4 @@
     </script>
 </body>
     </html>
-    
+                
